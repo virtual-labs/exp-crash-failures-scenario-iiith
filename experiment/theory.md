@@ -4,7 +4,7 @@ We consider fail-stop model with n processes, where up to f < n processes may st
 
 ## Algorithm
 
-**Every process runs the following for f+1 iterations: **
+**Every process runs the following for f+1 iterations:**
 
 1. If the current value of x has not been broadcast then broadcast(x):
 2. yj ←− value (if any) received from process j in this round;
