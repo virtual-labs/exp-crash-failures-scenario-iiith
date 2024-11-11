@@ -7,8 +7,8 @@ We consider fail-stop model with n processes, where up to f < n processes may st
 **Every process runs the following for f+1 iterations:**
 
 1. If the current value of x has not been broadcast then broadcast(x):
-2. yj ←− value (if any) received from process j in this round;
-3. x←−min∀jxyj ;
+2. y<sub>j</sub> ← value (if any) received from process j in this round;
+3. x ← min<sub>∀j</sub>(x,y<sub>j</sub>) ;
 
 *Final value of x is the consensus value*.
 
