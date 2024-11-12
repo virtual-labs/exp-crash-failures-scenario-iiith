@@ -17,10 +17,8 @@ We consider fail-stop model with n processes, where up to f < n processes may fa
 ### Agreement  
 Since there are f+1 rounds, there exist at least one round, say r*, in which all good processes could broadcast their value i.e. no process failed in r*. As a result, latest value is broadcast and received by all, and all update their values to the minima. 
 
-*In-line Exercise 1* : Argue that agreement holds even when a good process is silent in round r*. 
-
 ### Correctness 
 Holds because once consensus is achieved among good processes, value cannot change. Processes are non-byzantine, and a failed process never restarts. 
 
 ### Termination  
-In-line Exercise 2 : Argue that above protocol terminates. 
+Since f+1 is finite, and there are constant number of operations in every iteration, algorithm clearly terminates, 
