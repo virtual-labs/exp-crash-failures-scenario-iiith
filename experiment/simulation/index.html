@@ -1,13 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<!-- Add CSS at the head of HTML file -->
-    <link rel="stylesheet" href="./css/main.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css">
+  <title>Distributed consensus in the presense of crash failure</title>
 </head>
 <body>
-		<!-- Your code goes here-->
-
-	<!-- Add JS at the bottom of HTML file --> 
-        <script src="./js/main.js"></script>
+  <!-- Controls -->
+  <section id="controls">
+  <grid>
+    <div col="2/4">
+      <label for="processes">Number of processes</label>
+      <input type="number" id="processes" min="3" max="20" value="5">
+    </div>
+    <div col="2/4">
+      <button id="start">Start simulation</button>
+      <button id="stop">Stop simulation</button>
+    </div>
+  </grid>
+    <p>Objective: Click on a process to simulate its crash.</p>
+  </section>
+  <!-- Simulation Environment -->
+  <section id="simulation">
+    <canvas id="display" width="800" height="600"></canvas>
+  </section>
+  <script src="./js/main.js"></script>
 </body>
 </html>

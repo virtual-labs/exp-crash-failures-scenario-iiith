@@ -1,1 +1,1 @@
-## Experiment name
+## Distributed Consensus - Crash Failures Scenario
