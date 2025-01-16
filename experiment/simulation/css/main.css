@@ -23,7 +23,9 @@ body {
 #controls div[col] {
   margin: 0.5rem;
 }
-
+#controls select {
+  height: 1.5rem;
+}
 
 /* For the simulation display. */
 #display {

@@ -22,7 +22,14 @@
       <button id="stop">Stop simulation</button>
     </div>
   </grid>
-    <p>Objective: Click on a process to simulate its crash.</p>
+    <label for="objective">Objective</label>
+    <select name="objective" id="objective">
+      <option value="">Just exploring</option>
+      <option value="formin2" selected>Force consensus to run for at least 2 rounds</option>
+      <option value="forext3" disabled>Force consensus to run for 3 rounds</option>
+      <option value="forext4" disabled>Force consensus to run for 4 rounds</option>
+      <option value="cr3ext4" disabled>Force consensus to run for 4 rounds, crashing only 3 processes</option>
+    </select>
   </section>
   <!-- Simulation Environment -->
   <section id="simulation">

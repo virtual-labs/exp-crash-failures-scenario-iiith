@@ -3,6 +3,8 @@
 
 /** Input element for number of processes. */
 const IPROCESSES = document.getElementById("processes");
+/** Input element for the simulation objective. */
+const IOBJECTIVE = document.getElementById("objective");
 /** Canvas element for simulation visualization. */
 const CDISPLAY   = document.getElementById("display");
 /** Start button. */
@@ -73,6 +75,8 @@ var simulation = {
   processes: [],
   /** Any additional information. */
   info: '',
+  /** Simulation objective. */
+  objective: 'formin2',
 };
 
 
@@ -138,18 +142,21 @@ main();
 function onStartClick() {
   var s = simulation;
   var P = parseInt(IPROCESSES.value, 10);
+  var O = IOBJECTIVE.value;
   console.log('onStartClick()', s);
-  if (!s.isRunning || s.processes.length !== P) {
+  if (!s.isRunning || s.processes.length !== P || s.objective !== O) {
     if (isNaN(P) || P<3 || P>20) {
       alert('Please enter a number between 3 and 20.');
       return;
     }
+    s.objective = O;
     startSimulation(P);
   }
   else {
     s.isPaused  = s.isRunning? !s.isPaused : false;
     s.isResumed = !s.isPaused;
   }
+  drawButtons();
   requestAnimationFrame(simulationLoop);
 }
 
@@ -162,6 +169,7 @@ function onStopClick() {
   console.log('onStopClick()');
   s.info = 'Simulation stopped';
   stopSimulation();
+  drawButtons();
 }
 
 
@@ -268,10 +276,10 @@ function updateSimulation(timestamp) {
   s.roundTime = rt;
   s.phaseTime = rt < P-1? rt : (rt < P? rt-P-1 : (rt < 2*P-1? rt-P : rt-2*P-1));
   // Perform round updates.
-  if (s.phase==1) updateReceivedValues();
-  else if (s.phase==2) computeMinValues();
-  else if (s.round>0 && s.phase==0) {
-    updateReceivedValues();
+  if (s.phase===1) updateReceivedValues();
+  else if (s.phase===2) computeMinValues();
+  else if (s.phase===3) updateReceivedValues();
+  else if (s.round>0 && s.phase===0) {
     checkConsensus();
     if (reachedConsensus()) {
       s.isRunning = false;
@@ -280,7 +288,95 @@ function updateSimulation(timestamp) {
       s.phase = 3;
       s.roundTime = 0;
       s.phaseTime = 0;
+      for (var p of s.processes)
+        p.received = [];
+      if (achievedObjective()) {
+        unlockObjectives(s.objective);
+        if (s.objective) s.info += '\nYou have also achieved the objective!\nYou can now try the next objective.';
+      }
+      else s.info += '\nYou have not achieved the objective.\nPlease try again.';
     }
+    drawButtons();
+  }
+}
+
+
+/**
+ * Update the received values for each process.
+ */
+function updateReceivedValues() {
+  var s = simulation;
+  var P = s.processes.length;
+  for (var i=0; i<P; ++i) {
+    var p = s.processes[i];
+    if (p.isCrashed || p.received.length !== 0) continue;
+    for (var j=i-1; j>=i-P; --j) {
+      var q = s.processes[(P+j) % P];
+      // Each process sends in clockwise order every second.
+      var prevPhaseStartTime = s.time - s.phaseTime - P;
+      var recvTime = prevPhaseStartTime + (P+i-j+1) % P;
+      if (q===p || (q.isCrashed && q.crashTime < recvTime)) continue;
+      p.received.push(q.value);
+    }
+  }
+}
+
+
+/**
+ * Get the received values for the current phase.
+ * @param p process node
+ * @returns {number[]} received values
+ */
+function receivedValues(p) {
+  var s = simulation;
+  var P = s.processes.length;
+  var i = p.id;
+  var received = [];
+  if (p.isCrashed) return received;
+  for (var j=i-1; j>=i-P; --j) {
+    var q = s.processes[(P+j) % P];
+    // Each process sends in clockwise order every second.
+    var recvTime = s.time - s.phaseTime + (i-j) % P;
+    if (q===p || (q.isCrashed && q.crashTime < recvTime)) continue;
+    if (s.time > recvTime) received.push(q.value);
+  }
+  return received;
+}
+
+
+/**
+ * Compute the minimum values for each process.
+ */
+function computeMinValues() {
+  var s = simulation;
+  for (var p of s.processes) {
+    if (p.isCrashed || p.received.length === 0) continue;
+    p.value = Math.min(p.value, ...p.received);
+    p.received = [];
+  }
+}
+
+
+/**
+ * Count the number of crashed processes.
+ */
+function crashedProcesses() {
+  var s = simulation;
+  var n = 0;
+  for (var p of s.processes)
+    if (p.isCrashed) ++n;
+  return n;
+}
+
+
+/**
+ * Check for consensus among the processes.
+ */
+function checkConsensus() {
+  var s = simulation;
+  for (var p of s.processes) {
+    if (p.isCrashed) continue;
+    p.isSatisfied = p.received.every(v => v===p.value);
   }
 }
 
@@ -299,47 +395,37 @@ function reachedConsensus() {
 
 
 /**
- * Update the received values for each process.
+ * Check the simulation objective has been met.
  */
-function updateReceivedValues() {
+function achievedObjective() {
   var s = simulation;
-  var P = s.processes.length;
-  for (var i=0; i<P; ++i) {
-    var p = s.processes[i];
-    if (p.isCrashed || p.received.length !== 0) continue;
-    for (var j=0; j<P; ++j) {
-      var q = s.processes[j];
-      // Each process sends in clockwise order every second.
-      var prevPhaseStartTime = s.time - s.phaseTime - P;
-      var recvTime = prevPhaseStartTime + (P+i-j+1) % P;
-      if (j===i || (q.isCrashed && q.crashTime < recvTime)) continue;
-      p.received.push(q.value);
-    }
+  switch (s.objective) {
+    case 'formin2':  // Force consensus to run for at least 2 rounds
+      return s.round>=1;
+    case 'forext3':  // Force consensus to run for 3 rounds
+      return s.round==2;
+    case 'forext4':  // Force consensus to run for 4 rounds
+      return s.round==3;
+    case 'cr3ext4':  // Force consensus to run for 4 rounds, crashing only 3 processes
+      return s.round==3 && crashedProcesses()===3;
+    default:  // Just exploring
+      return true;
   }
 }
 
 
 /**
- * Compute the minimum values for each process.
+ * Unlock the objectives based on the simulation results.
+ * @param {string} objective objective which was achieved
  */
-function computeMinValues() {
-  var s = simulation;
-  for (var p of s.processes) {
-    if (p.isCrashed || p.received.length === 0) continue;
-    p.value = Math.min(p.value, ...p.received);
-    p.received = [];
-  }
-}
-
-
-/**
- * Check for consensus among the processes.
- */
-function checkConsensus() {
-  var s = simulation;
-  for (var p of s.processes) {
-    if (p.isCrashed) continue;
-    p.isSatisfied = p.received.every(v => v===p.value);
+function unlockObjectives(objective) {
+  var options = IOBJECTIVE.options;
+  var shouldBreak = false;
+  for (var i=0; i<options.length; ++i) {
+    var opt = options[i];
+    opt.disabled = false;
+    if (shouldBreak) break;
+    if (opt.value===objective) shouldBreak = true;
   }
 }
 
@@ -361,7 +447,7 @@ function renderSimulation() {
   for (var p of s.processes)
     drawProcess(p);
   // Draw messages between processes.
-  if (s.roundTime > 0 && (s.phase==0 || s.phase==2)) {
+  if (s.roundTime > 0 && (s.phase===0 || s.phase===2)) {
     for (var i=0; i<P; ++i) {
       var di  = Math.floor(s.phaseTime);
       var src = s.processes[i];
@@ -378,8 +464,11 @@ function renderSimulation() {
   ctx.font = MAIN_TEXT_FONT;
   ctx.fillText(`Round: ${s.round + 1} : ${PHASE_NAMES[s.phase]}`, 20, 30);
   // Draw any additional information.
+  if (!s.info) return;
+  var infos = s.info.split('\n');
   ctx.textAlign = 'center';
-  ctx.fillText(s.info, CDISPLAY.width/2, CDISPLAY.height/2);
+  for (var i=0; i<infos.length; ++i)
+    ctx.fillText(infos[i], CDISPLAY.width/2, CDISPLAY.height/2 + 20*i);
 }
 
 
@@ -428,6 +517,10 @@ function drawProcess(p) {
   ctx.textAlign = 'center';
   ctx.fillText(`P${p.id+1}`, p.x, p.y - 1.25 * PROCESS_RADIUS);
   ctx.fillText(''+p.value,   p.x, p.y + 0.25 * PROCESS_RADIUS);
+  // Draw the receieved values.
+  var received = s.phase===0 || s.phase===2? receivedValues(p) : p.received;
+  var recvtxt  = received.join(', ');
+  ctx.fillText(recvtxt, p.x, p.y + 1.8 * PROCESS_RADIUS);
 }
 
 
@@ -497,4 +590,13 @@ function drawMessage(src, dst, text, prg) {
 function clearDisplay() {
   var ctx = CDISPLAY.getContext('2d');
   ctx.clearRect(0, 0, CDISPLAY.width, CDISPLAY.height);
+}
+
+
+/**
+ * Render button text.
+ */
+function drawButtons() {
+  var s = simulation;
+  BSTART.textContent = s.isRunning? (s.isPaused? 'Resume simulation' : 'Pause simulation') : 'Start simulation';
 }
