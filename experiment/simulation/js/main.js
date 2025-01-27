@@ -121,8 +121,8 @@ function main() {
   CDISPLAY.addEventListener('click', e => {
     console.log('CDISPLAY click');
     var r = CDISPLAY.getBoundingClientRect();
-    var x = e.clientX - r.left;
-    var y = e.clientY - r.top;
+    var x = (e.clientX - r.left) * CDISPLAY.width  / r.width;
+    var y = (e.clientY - r.top)  * CDISPLAY.height / r.height;
     onProcessClick(x, y);
   });
   // Let some rendering happen.
