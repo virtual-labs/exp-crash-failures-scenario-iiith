@@ -1,6 +1,6 @@
 ### Theory
 
-We consider fail-stop model with n processes, where up to $f < n$ processes may fail (and stop). The task is to reach consensus on a particular variable, say $x$ (integer). If we are to tolerate up to $f$ failures, we run the algorithm for $f+1$ rounds. We argue, using in-line exercises, that at the end of the procedure, local value $x$ in all active machines is guaranteed to be the consensus value. Every machine executes the protocol synchronously. This case assumes non-existence of Byzantine processes - i.e. adversary processes which may try to "fool" the system.
+Consider fail-stop model with n processes, where up to $f < n$ processes may fail (and stop). The task is to reach consensus on a particular variable, say $x$ (integer). If we are to tolerate up to $f$ failures, we run the algorithm for $f+1$ rounds. We argue, using in-line exercises, that at the end of the procedure, local value $x$ in all active machines is guaranteed to be the consensus value. Every machine executes the protocol synchronously. This case assumes non-existence of Byzantine processes - i.e. adversary processes which may try to "fool" the system.
 
 <br>
 
