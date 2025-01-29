@@ -8,7 +8,7 @@
 <b>Discipline | <b>Computer Science and Engineering
 :--|:--|
 <b> Lab | <b> Distributed Systems Virtual Lab
-<b> Experiment|     <b> Distributed Consensus - Crash Failures Scenario (10)
+<b> Experiment| <b> Distributed Consensus - Crash Failures Scenario (10)
 
 
 ### Subject matter expert
@@ -16,7 +16,7 @@
 <b>Name of Developer | <b> Dr. Kishore Kothapalli
 :--|:--|
 <b> Institute | <b> IIIT Hyderabad
-<b> Email id|     <b> kkishore@iiit.ac.in
+<b> Email id | <b> kkishore@iiit.ac.in
 <b> Department | Computer Science and Engineering (Professor)
 <b> Website | [Faculty Page](https://faculty.iiit.ac.in/~kkishore/)
 
