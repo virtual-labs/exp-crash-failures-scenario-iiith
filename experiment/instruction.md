@@ -1,7 +1,7 @@
 
 ### Instruction
 
-1  - Open the simulation interface in a browser.
+1  Open the simulation interface in a browser.
 
 2. **Configure**
    - **Set the Number of Processes:**
@@ -19,7 +19,7 @@
    - Crash processes to simulate node faliure.
 
 7. **The Game:**
-   -Crash stratgically to achive objective.
+   -Crash strategically to achive objective.
    
 9. **Repeat for Additional Objectives:**
    - Adjust the number of processes or select a different objective, and restart the simulation to explore various scenarios.
