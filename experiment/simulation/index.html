@@ -1,13 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<!-- Add CSS at the head of HTML file -->
-    <link rel="stylesheet" href="./css/main.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/css/style.min.css">
+  <link rel="stylesheet" href="./css/main.css">
+  <title>Distributed consensus in the presense of crash failure</title>
 </head>
 <body>
-		<!-- Your code goes here-->
+  <!-- Instructions -->
+  <div class="container">
+  <div class="columns is-centered">
+    <div class="column">
+    <div class="v-collapsible-instruction-container v-instruction-container">
+      <div class="v-collapsible is-size-5">Instructions</div>
+      <div class="v-content" style="text-align: left; padding-left: 10%; padding-right: 10%;">
+        <ul style="list-style: disc;">
+          <li>
+            <strong>Set the number of processes:</strong>
+            Locate the "Number of processes" field in the controls section. Enter the desired
+            number of processes (minimum 3, maximum 20). The default value is 5.
+          </li>
+          <li>
+            <strong>Choose the objective:</strong> Open the dropdown menu labeled "Objective."
+            Select one of the available objectives, such as:
+            <ul style="list-style: circle;">
+              <li><em>Just exploring</em>: No specific goal; observe the behavior.</li>
+              <li><em>Force consensus to run for at least 2 rounds</em> (default).</li>
+            </ul>
+            Note that some objectives are locked initially, and can be unlocked by achieving objectives.
+          </li>
+          <li>
+            <strong>Start simulation:</strong>
+            Click the "Start simulation" button to begin the simulation with the selected parameters.
+            The same button can be used to pause/resume the simulation.
+          </li>
+          <li>
+            <strong>Details of the simulation:</strong>
+            The simulation presents a visual representation of the processes, arranged in a circle.
+            Each process is represented by a colored circle, and is initialized with a random value.
+            Over one or more rounds, the processes communicate with each other to reach a consensus.
+            Each round consists or four phases. In the first phase, each process sends its value to
+            all other processes. In the second phase, each process finds the minimum value received
+            from other processes. In the third phase, each process sends the minimum value to all the
+            other processes. Finally, in the fourth phase, each process verifies if the minimum value
+            received from other processes is the same as its own value. If so, the process is said to
+            have reached consensus with the other processes. If not, consensus is not reached, and the
+            process continues to the next round, until consensus is reached. Failure to achieve
+            consensus is due to the presence of crash failures in the system. The algorithm is guaranteed
+            to reach consensus in <code>f + 1</code> rounds, where <code>f</code> is the number of
+            processes that can crash.
+          </li>
+          <li>
+            <strong>Crashing a process:</strong>
+            To simulate a crash failure, click on a process to crash it. The process will be marked as
+            crashed, and will not participate in the consensus process. The simulation will continue
+            with the remaining processes.
+          </li>
+          <li>
+            <strong>The game:</strong>
+            The game is to trigger the right processes to crash, at the right time, such that it forces
+            the consensus algorithm to run for the desired number of rounds. This helps in understanding
+            the behavior of the consensus algorithm in the presence of crash failures.
+          </li>
+        </ul>
+      </div>
+    </div>
+    </div>
+  </div>
+  </div>
 
-	<!-- Add JS at the bottom of HTML file --> 
-        <script src="./js/main.js"></script>
+  <!-- Wrapper -->
+  <section class="section">
+  <div class="columns">
+
+  <!-- Controls -->
+  <div class="column is-one-third">
+  <form class="box" id="controls" onsubmit="return false;">
+    <div class="field">
+      <label class="label" for="objective">Objective</label>
+      <div class="control">
+      <div class="select">
+      <select name="objective" id="objective">
+        <option value="">Just exploring</option>
+        <option value="formin2" selected>Force consensus to run for at least 2 rounds</option>
+        <option value="forext3" disabled>Force consensus to run for 3 rounds</option>
+        <option value="forext4" disabled>Force consensus to run for 4 rounds</option>
+        <option value="cr3ext4" disabled>Force consensus to run for 4 rounds, crashing only 3 processes</option>
+      </select>
+      </div>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label" for="processes">Number of processes</label>
+      <div class="control">
+      <input class="input" type="number" id="processes" min="3" max="20" value="5" placeholder="Enter a number">
+      </div>
+    </div>
+    <div class="field mt-4">
+    <div class="control">
+      <button class="button is-primary" id="start">Start simulation</button>
+      <button class="button" id="stop">Stop simulation</button>
+    </div>
+    </div>
+  </form>
+  </div>
+
+  <!-- Simulation Environment -->
+  <div class="column is-two-thirds">
+  <div id="simulation">
+    <canvas id="display" width="800" height="600"></canvas>
+  </div>
+  </div>
+
+  <!-- End of Wrapper -->
+  </div>
+  </section>
+
+  <!-- Load the scripts -->
+  <script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
+  <script src="./js/main.js"></script>
 </body>
 </html>

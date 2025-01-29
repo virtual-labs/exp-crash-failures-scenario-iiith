@@ -2,38 +2,89 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "This is a Sample Question 1?",
+      "question": "What is the primary goal of the distributed consensus algorithm described?",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "To ensure every process runs indefinitely",
+        "b": "To synchronize clocks across distributed systems",
+        "c": "To agree on a single value among all non-faulty processes",
+        "d": "To encrypt communication between processes"
       },
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
-      },
-      "correctAnswer": "a",
-      "difficulty": "beginner"
-    },
-    {
-      "question": "This is a Sample Question 2?",
-      "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
-      },
-      "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "a": "Incorrect: The algorithm is designed to terminate after consensus is reached.",
+        "b": "Incorrect: Synchronizing clocks is not the purpose of this algorithm.",
+        "c": "Correct: The algorithm ensures all non-faulty processes agree on a single value.",
+        "d": "Incorrect: Encryption is not the focus of this consensus algorithm."
       },
       "correctAnswer": "c",
       "difficulty": "beginner"
+    },
+    {
+      "question": "How many rounds does the consensus algorithm run to tolerate up to f process failures?",
+      "answers": {
+        "a": "f",
+        "b": "f+1",
+        "c": "2f",
+        "d": "2f+1"
+      },
+      "explanations": {
+        "a": "Incorrect: The algorithm runs one more round than the number of failures.",
+        "b": "Correct: The algorithm runs for f+1 rounds to tolerate up to f failures.",
+        "c": "Incorrect: This overestimates the required number of rounds.",
+        "d": "Incorrect: This is not required for the fail-stop model."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What happens in a round if a process does not broadcast its current value?",
+      "answers": {
+        "a": "The process is considered non-faulty",
+        "b": "The process broadcasts a default value",
+        "c": "No value is received from that process in the round",
+        "d": "The process restarts the algorithm"
+      },
+      "explanations": {
+        "a": "Incorrect: Faulty processes are defined by failure to operate, including failure to broadcast in a round.",
+        "b": "Incorrect: There is no default value broadcast in this algorithm.",
+        "c": "Correct: If a process does not broadcast, no value is received from it.",
+        "d": "Incorrect: Processes do not restart in this algorithm."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "What ensures that the consensus value does not change once it is reached?",
+      "answers": {
+        "a": "Processes restart after consensus",
+        "b": "Values are broadcast only once",
+        "c": "Processes are non-Byzantine and do not alter the agreed value",
+        "d": "Consensus is achieved before any processes fail"
+      },
+      "explanations": {
+        "a": "Incorrect: Processes do not restart in this algorithm.",
+        "b": "Incorrect: Values can be broadcast multiple times during the algorithm.",
+        "c": "Correct: Non-Byzantine processes ensure the agreed value is not altered.",
+        "d": "Incorrect: Consensus is designed to tolerate failures, not avoid them entirely."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Why is the fail-stop model suitable for this consensus algorithm?",
+      "answers": {
+        "a": "It assumes all processes will eventually fail",
+        "b": "It avoids dealing with adversarial (Byzantine) processes",
+        "c": "It guarantees synchronization of all processes",
+        "d": "It requires processes to restart on failure"
+      },
+      "explanations": {
+        "a": "Incorrect: The fail-stop model assumes some processes may fail but not all.",
+        "b": "Correct: The fail-stop model simplifies the algorithm by avoiding Byzantine behavior.",
+        "c": "Incorrect: Synchronization is not guaranteed for all processes, only agreement among non-faulty ones.",
+        "d": "Incorrect: Processes do not restart in the fail-stop model."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
     }
   ]
 }
