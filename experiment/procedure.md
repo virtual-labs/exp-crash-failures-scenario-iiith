@@ -18,6 +18,7 @@
    - Click the **Start simulation** button to begin.
    - Observe the consensus process in the display canvas.
    - The same button can be used to pause/resume the simulation.
+   - Use the **Stop simulation** button to stop/reset the simulation.
 
 4. **Details of the Simulation:**
    - The simulation presents a visual representation of the processes, arranged in a circle.
@@ -41,6 +42,7 @@
 6. **The Game:**
    - The goal is to trigger the right processes to crash at the right time to force the consensus algorithm to run for the desired number of rounds.
    - This helps in understanding the behavior of the consensus algorithm in the presence of crash failures.
+   - Once the current objective is achieved (and consensus reached), the next objective will be unlocked.
 
 7. **Repeat for Additional Objectives:**
    - Adjust the number of processes or select a different objective, and restart the simulation to explore various scenarios.

@@ -168,8 +168,17 @@ function onStopClick() {
   var s  = simulation;
   console.log('onStopClick()');
   s.info = 'Simulation stopped';
-  stopSimulation();
-  drawButtons();
+  if (s.isRunning) stopSimulation();
+  else {
+    // Let some rendering happen.
+    var s = simulation;
+    var P = parseInt(IPROCESSES.value, 10);
+    startSimulation(P);
+    renderSimulation();
+    drawButtons();
+    s.isPaused  = true;
+    s.isResumed = false;
+  }
 }
 
 
