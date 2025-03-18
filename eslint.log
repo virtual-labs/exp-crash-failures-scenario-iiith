@@ -1,0 +1,8 @@
+
+/home/runner/work/exp-crash-failures-scenario-iiith/exp-crash-failures-scenario-iiith/experiment/simulation/js/main.js
+   24:7   warning  'PROCESS_ACTIVE_COLOR' is assigned a value but never used  no-unused-vars
+  174:9   warning  's' is already defined                                     no-redeclare
+  479:12  warning  'i' is already defined                                     no-redeclare
+
+✖ 3 problems (0 errors, 3 warnings)
+

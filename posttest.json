@@ -1,0 +1,90 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "Which process must crash in order for consensus to take at least 2 rounds?",
+      "answers": {
+        "a": "The process with the highest value/ID",
+        "b": "The process with the lowest value/ID",
+        "c": "A process chosen at random",
+        "d": "All processes except one"
+      },
+      "explanations": {
+        "a": "Incorrect: Crashing the highest value process does not necessarily delay consensus.",
+        "b": "Correct: The process with the lowest value/ID must crash to force consensus to take at least 2 rounds.",
+        "c": "Incorrect: Random crashes may not guarantee a delay of 2 rounds.",
+        "d": "Incorrect: This scenario eliminates consensus rather than delays it."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "When must the lowest value/ID process crash for consensus to take at least 2 rounds?",
+      "answers": {
+        "a": "After it has broadcast its value in round 1",
+        "b": "Before it broadcasts its value to all processes in round 1",
+        "c": "At any point during the simulation",
+        "d": "Only after all processes reach consensus"
+      },
+      "explanations": {
+        "a": "Incorrect: Crashing after broadcasting will not affect the first round of consensus.",
+        "b": "Correct: Crashing before broadcasting ensures other processes cannot receive the lowest value in round 1.",
+        "c": "Incorrect: Timing of the crash is crucial to delaying consensus.",
+        "d": "Incorrect: Crashes after consensus does not influence the rounds."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Which processes must crash in order for consensus to take at least 3 rounds?",
+      "answers": {
+        "a": "Only the process with the highest value",
+        "b": "The process with the lowest value first, and processes with lowest value in next round",
+        "c": "All processes except two",
+        "d": "A random subset of processes"
+      },
+      "explanations": {
+        "a": "Incorrect: Crashing only the highest value process does not delay consensus to 3 rounds.",
+        "b": "Correct: The lowest value process and processed that received its message must crash to delay consensus to 3 rounds.",
+        "c": "Incorrect: This is overly restrictive and does not align with the simulation observations.",
+        "d": "Incorrect: Random crashes do not ensure the conditions for delayed consensus."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "When should the lowest value process crash to ensure consensus takes at least 3 rounds?",
+      "answers": {
+        "a": "After it broadcasts its value to all processes",
+        "b": "Before it broadcasts its value to all processes",
+        "c": "At the end of the second round",
+        "d": "After all processes have completed communication"
+      },
+      "explanations": {
+        "a": "Incorrect: Crashing after broadcasting does not delay consensus sufficiently.",
+        "b": "Correct: Crashing before broadcasting ensures the value is not received by others, delaying consensus.",
+        "c": "Incorrect: Timing at the second round does not ensure a 3-round delay.",
+        "d": "Incorrect: Crashing after communication is completed does not affect the rounds."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "When should processes crash in the second round, in order for consensus to take 3 rounds?",
+      "answers": {
+        "a": "Processes with the lowest value, before they manage to send to all processes without the lowest value",
+        "b": "Any process can crash at any time to ensure consensus takes 3 rounds",
+        "c": "Processes with the highest value/ID, before they send to all processes",
+        "d": "One of the processes with the lowest value, before it sends to all processes without the lowest value"
+      },
+      "explanations": {
+        "a": "Correct: Crashing the lowest value processes before they send to all processes without the lowest value ensures consensus takes 3 rounds.",
+        "b": "Incorrect: Random crashes will not necessarily delay consensus for 3 rounds.",
+        "c": "Incorrect: Crashing the highest value processes does not delay consensus for 3 rounds.",
+        "d": "Incorrect: Crashing one of the lowest value processes does not ensure consensus takes 3 rounds."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    }
+  ]
+}
