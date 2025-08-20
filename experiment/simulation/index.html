@@ -1,115 +1,1614 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/css/style.min.css">
-  <link rel="stylesheet" href="./css/main.css">
-  <title>Distributed consensus in the presense of crash failure</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed Consensus - Crash Failures Scenario</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1a202c;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 320px 1fr 350px;
+            grid-template-rows: 1fr;
+            height: 100vh;
+            max-width: 1800px;
+            margin: 0 auto;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+
+
+        .controls-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .controls-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .controls-panel::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        .controls-panel::-webkit-scrollbar-thumb {
+            background: #4299e1;
+            border-radius: 3px;
+        }
+
+        .experiment-area {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: radial-gradient(circle at 50% 50%, #f8fafc 0%, #e2e8f0 100%);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .observations-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            height: calc(100vh - 30px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .observations-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .observations-panel::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        .observations-panel::-webkit-scrollbar-thumb {
+            background: #4299e1;
+            border-radius: 3px;
+        }
+
+        .control-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .control-section h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-section h3::before {
+            content: '⚙️';
+            font-size: 1.2em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            color: #2d3748;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        .simulation-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+            min-height: 500px;
+        }
+
+        .phase-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+
+        .status-section {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 15px;
+        }
+
+        .status-section h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-section h4::before {
+            content: '📊';
+            font-size: 1.1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            min-height: 85px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .stat-description {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            margin-top: 2px;
+            line-height: 1.2;
+        }
+
+        #round-display { color: #3b82f6; }
+        #active-count { color: #10b981; }
+        #crashed-count { color: #ef4444; }
+        #phase-display { color: #f59e0b; }
+
+        .logs {
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .log-entry {
+            margin: 4px 0;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: #f8fafc;
+            border-left: 3px solid #94a3b8;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .log-entry.broadcast {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+            color: #059669;
+        }
+
+        .log-entry.compute {
+            border-left-color: #3b82f6;
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .log-entry.consensus {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+            color: #d97706;
+        }
+
+        .log-entry.crash {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .legend-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            z-index: 10;
+            min-width: 200px;
+        }
+
+        .legend-panel h4 {
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-panel h4::before {
+            content: '🔍';
+            font-size: 1em;
+        }
+
+        .legend-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            color: #4a5568;
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 1px solid #e2e8f0;
+        }
+
+        .scenario-section {
+            background: linear-gradient(135deg, #f0f8ff 0%, #e0f2fe 100%);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #bee3f8;
+        }
+
+        .scenario-section h4 {
+            color: #2c5282;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        #display {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+            cursor: crosshair;
+        }
+
+        .processes-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            z-index: 10;
+            min-width: 250px;
+        }
+
+        .processes-panel h4 {
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .processes-panel h4::before {
+            content: '🔄';
+            font-size: 1em;
+        }
+
+        .process-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .process-badge {
+            background: linear-gradient(135deg, rgba(148, 163, 184, 0.1) 0%, rgba(148, 163, 184, 0.05) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            color: #475569;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .process-badge.crashed {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #dc2626;
+        }
+
+        .process-badge.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #059669;
+        }
+
+        @media (max-width: 1200px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto auto;
+                height: 100vh;
+                gap: 10px;
+                padding: 10px;
+            }
+            
+            .controls-panel {
+                height: 300px;
+                order: 2;
+            }
+            
+            .legend-panel {
+                bottom: 60px;
+            }
+            
+            .experiment-area {
+                order: 1;
+                min-height: 400px;
+            }
+            
+            .observations-panel {
+                height: 250px;
+                order: 3;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            
+            .stat-card {
+                padding: 10px;
+                min-height: 80px;
+            }
+            
+            .stat-value {
+                font-size: 1.3rem;
+            }
+            
+            .legend-panel {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                margin-top: 15px;
+                margin-bottom: 15px;
+                min-width: auto;
+                width: 100%;
+            }
+
+            .legend-items {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+
+            .legend-item {
+                font-size: 0.75rem;
+                gap: 8px;
+            }
+
+            .legend-color {
+                width: 12px;
+                height: 12px;
+            }
+
+            .processes-panel {
+                position: relative;
+                bottom: auto;
+                right: auto;
+                margin-top: 15px;
+                min-width: auto;
+                width: 100%;
+            }
+        }
+        
+        /* Mobile Portrait Orientation Overlay */
+        .rotate-device-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 10000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .rotate-device-overlay .rotate-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: rotateAnimation 2s ease-in-out infinite;
+        }
+
+        .rotate-device-overlay h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .rotate-device-overlay p {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.5;
+            max-width: 300px;
+        }
+
+        @keyframes rotateAnimation {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+
+        @media screen and (max-width: 768px) and (orientation: portrait) {
+            .rotate-device-overlay {
+                display: flex !important;
+            }
+            
+            .app-container {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- Instructions -->
-  <div class="container">
-  <div class="columns is-centered">
-    <div class="column">
-    <div class="v-collapsible-instruction-container v-instruction-container">
-      <div class="v-collapsible is-size-5">Instructions</div>
-      <div class="v-content" style="text-align: left; padding-left: 10%; padding-right: 10%;">
-        <ul style="list-style: disc;">
-          <li>
-            <strong>Set the number of processes:</strong>
-            Locate the "Number of processes" field in the controls section. Enter the desired
-            number of processes (minimum 3, maximum 20). The default value is 5.
-          </li>
-          <li>
-            <strong>Choose the objective:</strong> Open the dropdown menu labeled "Objective."
-            Select one of the available objectives, such as:
-            <ul style="list-style: circle;">
-              <li><em>Just exploring</em>: No specific goal; observe the behavior.</li>
-              <li><em>Force consensus to run for at least 2 rounds</em> (default).</li>
-            </ul>
-            Note that some objectives are locked initially, and can be unlocked by achieving objectives.
-          </li>
-          <li>
-            <strong>Start simulation:</strong>
-            Click the "Start simulation" button to begin the simulation with the selected parameters.
-            The same button can be used to pause/resume the simulation. Use the "Stop simulation" button
-            to stop/reset the simulation.
-          </li>
-          <li>
-            <strong>Crashing a process:</strong>
-            To simulate a crash failure, click on a process to crash it. The process will be marked as
-            crashed, and will not participate in the consensus process. The simulation will continue
-            with the remaining processes.
-          </li>
-          <li>
-            <strong>The game:</strong>
-            The game is to trigger the right processes to crash, at the right time, such that it forces
-            the consensus algorithm to run for the desired number of rounds. This helps in understanding
-            the behavior of the consensus algorithm in the presence of crash failures. Once the current
-            objective is achieved (and consensus reached), the next objective will be unlocked.
-          </li>
-        </ul>
-        <p>...</p>
-        <p>For detailed instructions on the simulation, please refer to <strong>Procedure</strong>.</p>
-      </div>
-    </div>
-    </div>
-  </div>
-  </div>
+    <div class="app-container">
 
-  <!-- Wrapper -->
-  <section class="section">
-  <div class="columns">
+        <div class="controls-panel">
+            <div class="control-section">
+                <h3>Consensus Configuration</h3>
+                <div class="input-group">
+                    <label for="processes">Number of Processes</label>
+                    <input type="number" id="processes" min="3" max="18" value="5">
+                </div>
+                <div class="input-group">
+                    <label for="objective">Simulation Objective</label>
+                    <select id="objective">
+                        <option value="explore">Just exploring</option>
+                        <option value="formin2">Force consensus to run for at least 2 rounds</option>
+                        <option value="forext3">Force consensus to run for exactly 3 rounds</option>
+                        <option value="forext4">Force consensus to run for exactly 4 rounds</option>
+                        <option value="cr3ext4">Crash exactly 3 processes, run for 4 rounds</option>
+                    </select>
+                </div>
+            </div>
 
-  <!-- Controls -->
-  <div class="column is-one-third">
-  <form class="box" id="controls" onsubmit="return false;">
-    <div class="field">
-      <label class="label" for="objective">Objective</label>
-      <div class="control">
-      <div class="select">
-      <select name="objective" id="objective">
-        <option value="">Just exploring</option>
-        <option value="formin2" selected>Force consensus to run for at least 2 rounds</option>
-        <option value="forext3" disabled>Force consensus to run for 3 rounds</option>
-        <option value="forext4" disabled>Force consensus to run for 4 rounds</option>
-        <option value="cr3ext4" disabled>Force consensus to run for 4 rounds, crashing only 3 processes</option>
-      </select>
-      </div>
-      </div>
-    </div>
-    <div class="field">
-      <label class="label" for="processes">Number of processes</label>
-      <div class="control">
-      <input class="input" type="number" id="processes" min="3" max="20" value="5" placeholder="Enter a number">
-      </div>
-    </div>
-    <div class="field mt-4">
-    <div class="control">
-      <button class="button is-primary" id="start">Start simulation</button>
-      <button class="button" id="stop">Stop simulation</button>
-    </div>
-    </div>
-  </form>
-  </div>
+            <div class="control-section">
+                <h3>Simulation Actions</h3>
+                <button id="start" class="btn btn-primary">▶️ Start Simulation</button>
+                <button id="stop" class="btn btn-danger">🔄 Reset Simulation</button>
+            </div>
 
-  <!-- Simulation Environment -->
-  <div class="column is-two-thirds">
-  <div id="simulation">
-    <canvas id="display" width="800" height="600"></canvas>
-  </div>
-  </div>
+            <div class="scenario-section">
+                <h4>Protocol Overview</h4>
+                <div style="font-size: 0.8rem; color: #4a5568; line-height: 1.4;">
+                    <p><strong>Consensus Algorithm:</strong> Distributed processes agree on a common value</p>
+                    <p><strong>Crash Failures:</strong> Some processes may fail by stopping execution</p>
+                    <p><strong>Objective:</strong> Achieve consensus despite failures within finite rounds</p>
+                </div>
+            </div>
+        </div>
 
-  <!-- End of Wrapper -->
-  </div>
-  </section>
+        <div class="experiment-area">
+            <div class="simulation-area">
+                <div class="legend-panel">
+                    <h4>Legend</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: linear-gradient(135deg, #10b981, #059669);"></div>
+                            <span>Active Process</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: linear-gradient(135deg, #ef4444, #dc2626);"></div>
+                            <span>Crashed Process</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: linear-gradient(135deg, #3b82f6, #1e40af);"></div>
+                            <span>Message Flow</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: linear-gradient(135deg, #f59e0b, #d97706);"></div>
+                            <span>Consensus Phase</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="phaseIndicator" class="phase-indicator">Ready to Start</div>
+                <canvas id="display"></canvas>
+                <div class="processes-panel">
+                    <h4>Process Status</h4>
+                    <div class="process-display" id="process-display"></div>
+                </div>
+            </div>
+        </div>
 
-  <!-- Load the scripts -->
-  <script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
-  <script src="./js/main.js"></script>
+        <div class="observations-panel">
+            <div class="status-section">
+                <h4>Execution Trace</h4>
+                <div class="logs" id="trace-container">
+                    <div class="log-entry consensus">[System] Distributed Consensus Protocol initialized</div>
+                    <div class="log-entry consensus">[Info] Click 'Start Simulation' to begin consensus algorithm</div>
+                    <div class="log-entry consensus">[Info] Click on any process during simulation to crash it</div>
+                </div>
+            </div>
+
+            <div class="status-section">
+                <h4>Simulation Statistics</h4>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="round-display">0</div>
+                        <div class="stat-label">Current Round</div>
+                        <div class="stat-description">Consensus round number</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="active-count">0</div>
+                        <div class="stat-label">Active Processes</div>
+                        <div class="stat-description">Non-crashed processes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="crashed-count">0</div>
+                        <div class="stat-label">Crashed Processes</div>
+                        <div class="stat-description">Failed processes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="phase-display">Ready</div>
+                        <div class="stat-label">Current Phase</div>
+                        <div class="stat-description">Algorithm phase</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- Mobile Portrait Orientation Overlay -->
+    <div class="rotate-device-overlay">
+        <div class="rotate-icon">📱➡️📲</div>
+        <h2>Please Rotate Your Device</h2>
+        <p>For the best experience, please rotate your device to landscape mode to view this distributed consensus simulation.</p>
+    </div>
+
+    <script>
+        // CONSTANTS
+        // ---------
+
+        /** Input element for number of processes. */
+        const IPROCESSES = document.getElementById("processes");
+        /** Input element for the simulation objective. */
+        const IOBJECTIVE = document.getElementById("objective");
+        /** Canvas element for simulation visualization. */
+        const CDISPLAY   = document.getElementById("display");
+        /** Start button. */
+        const BSTART = document.getElementById("start");
+        /** Stop button. */
+        const BSTOP  = document.getElementById("stop");
+
+        /** Simulation speed, in milliseconds per real second. */
+        const SIMULATION_SPEED = 0.5;
+        /** Color of the main text. */
+        const MAIN_TEXT_COLOR = '#1e293b';
+        /** Font of the main text. */
+        const MAIN_TEXT_FONT  = 'bold 16px Inter, system-ui, sans-serif';
+        /** Radius of each process node. */
+        const PROCESS_RADIUS = 25;
+        /** Color for active processes. */
+        const PROCESS_ACTIVE_COLOR  = '#10b981';
+        /** Color for crashed processes. */
+        const PROCESS_CRASHED_COLOR = '#94a3b8';
+        /** Border color of the process nodes. */
+        const PROCESS_BORDER_COLOR = '#475569';
+        /** Color of the text on the process nodes. */
+        const PROCESS_TEXT_COLOR = '#1e293b';
+        /** Thickness of the arrow for message sends. */
+        const ARROW_THICKNESS = 3;
+        /** Length of the arrow head for message sends. */
+        const ARROW_HEAD  = 18;
+        /** Angle of the arrow head for message sends. */
+        const ARROW_ANGLE = Math.PI / 6;
+        /** Color of the arrow for message sends. */
+        const ARROW_COLOR = '#3b82f6';
+        /** Color of the text on the arrow. */
+        const ARROW_TEXT_COLOR = '#1e293b';
+        /** Name of each phase in a round. */
+        const PHASE_NAMES = [
+          'Each process broadcasts its value',
+          'Each process computes the minimum of received values',
+          'Each process broadcasts the minimum value',
+          'Each process checks for consensus'
+        ];
+
+
+
+        // PARAMETERS
+        // ----------
+
+        /** Simulation details. */
+        var simulation = {
+          /** Is the simulation running? */
+          isRunning: false,
+          /** Is the simulation paused? */
+          isPaused: false,
+          /** Is the simulation resumed? */
+          isResumed: true,
+          /** Current simulation timestamp. */
+          timestamp: 0,
+          /** Current simulation time. */
+          time: 0,
+          /** Current round number. */
+          round: 0,
+          /** Phase of the current round. */
+          phase: 0,
+          /** Time in the current round. */
+          roundTime: 0,
+          /** Time in the current phase. */
+          phaseTime: 0,
+          /** List of processes in the system. */
+          processes: [],
+          /** Any additional information. */
+          info: '',
+          /** Simulation objective. */
+          objective: 'explore',
+        };
+
+
+
+        // CLASSES
+        // -------
+
+        /**
+         * Represents a process node in the system.
+         */
+        class Process {
+          /**
+           * Create a new process node.
+           * @param {number} id process ID
+           * @param {number} x x-coordinate of the process node
+           * @param {number} y y-coordinate of the process node
+           * @param {number} value initial value of the process
+           */
+          constructor(id, x, y, value) {
+            this.id = id;  // Process ID
+            this.x = x;    // x-coordinate of the process node
+            this.y = y;    // y-coordinate of the process node
+            this.value = value;        // Current value of the process
+            this.received    = [];     // Received values from other processes
+            this.isCrashed   = false;  // Is the process crashed?
+            this.crashTime   = 0;      // Simulation time of crash
+            this.isSatisfied = false;  // Consensus reached?
+          }
+        }
+
+
+
+        // FUNCTIONS
+        // ---------
+
+        /**
+         * Main function.
+         */
+        function main() {
+          BSTART.onclick = onStartClick;
+          BSTOP.onclick  = onStopClick;
+          
+          // Make canvas responsive
+          resizeCanvas();
+          window.addEventListener('resize', resizeCanvas);
+          
+          CDISPLAY.addEventListener('click', e => {
+            console.log('CDISPLAY click');
+            var r = CDISPLAY.getBoundingClientRect();
+            var x = (e.clientX - r.left) * CDISPLAY.width  / r.width;
+            var y = (e.clientY - r.top)  * CDISPLAY.height / r.height;
+            onProcessClick(x, y);
+          });
+          
+          // Let some rendering happen.
+          var s = simulation;
+          var P = parseInt(IPROCESSES.value, 10);
+          startSimulation(P);
+          renderSimulation();
+          updateUI();
+          s.isPaused  = true;
+          s.isResumed = false;
+          s.isRunning = false;  // Set to not running initially
+          drawButtons();  // Call after setting the correct state
+        }
+
+
+        /**
+         * Resize canvas to fit container properly.
+         */
+        function resizeCanvas() {
+          var container = CDISPLAY.parentElement;
+          var containerRect = container.getBoundingClientRect();
+          var padding = 40; // Account for container padding and panels
+          
+          var newWidth = Math.max(600, containerRect.width - padding);
+          var newHeight = Math.max(400, containerRect.height - padding);
+          
+          // Set canvas size
+          CDISPLAY.width = newWidth;
+          CDISPLAY.height = newHeight;
+          
+          // Update CSS size to match
+          CDISPLAY.style.width = newWidth + 'px';
+          CDISPLAY.style.height = newHeight + 'px';
+          
+          // Re-initialize processes if simulation is running
+          if (simulation.processes.length > 0) {
+            initProcesses(simulation.processes.length);
+            renderSimulation();
+          }
+        }
+
+        main();
+
+
+        /**
+         * Handle click on the start button.
+         */
+        function onStartClick() {
+          var s = simulation;
+          var P = parseInt(IPROCESSES.value, 10);
+          var O = IOBJECTIVE.value;
+          console.log('onStartClick()', s);
+          if (!s.isRunning || s.processes.length !== P || s.objective !== O) {
+            if (isNaN(P) || P<3 || P>18) {
+              alert('Please enter a number between 3 and 18.');
+              return;
+            }
+            s.objective = O;
+            startSimulation(P);
+          }
+          else {
+            s.isPaused  = s.isRunning? !s.isPaused : false;
+            s.isResumed = !s.isPaused;
+            if (s.isPaused) {
+              addTrace('Simulation paused', 'consensus');
+            } else {
+              addTrace('Simulation resumed', 'consensus');
+            }
+          }
+          drawButtons();
+          updateUI();
+          requestAnimationFrame(simulationLoop);
+        }
+
+
+        /**
+         * Handle click on the stop button.
+         */
+        function onStopClick() {
+          var s = simulation;
+          console.log('onStopClick()');
+          
+          // Always reset the simulation when stop is clicked
+          resetSimulation();
+          
+          // Initialize with current settings but keep it paused
+          var P = parseInt(IPROCESSES.value, 10);
+          if (!isNaN(P) && P >= 3 && P <= 18) {
+            initProcesses(P);
+          }
+          
+          s.info = 'Simulation reset - Click Start to begin';
+          addTrace('Simulation reset', 'consensus');
+          renderSimulation();
+          drawButtons();
+          updateUI();
+        }
+
+
+        /**
+         * Stop the simulation.
+         */
+        function stopSimulation() {
+          var s = simulation;
+          s.isRunning = false;
+          s.isPaused  = false;
+          s.isResumed = true;
+          renderSimulation();
+        }
+
+
+        /**
+         * Handle click on a process node.
+         * @param {number} x x-coordinate of the click
+         * @param {number} y y-coordinate of the click
+         */
+        function onProcessClick(x, y) {
+          var s = simulation;
+          if (!s.isRunning) return;
+          for (var p of s.processes) {
+            var dx = x - p.x;
+            var dy = y - p.y;
+            var r  = Math.sqrt(dx*dx + dy*dy);
+            if (r >= PROCESS_RADIUS || p.isCrashed) continue;
+            p.isCrashed = true;
+            p.crashTime = s.time;
+            addTrace(`Process P${p.id + 1} crashed!`, 'crash');
+            updateUI();
+            break;
+          }
+        }
+
+
+        /**
+         * Start the simulation.
+         * @param {number} P number of processes
+         */
+        function startSimulation(P) {
+          var s = simulation;
+          resetSimulation();
+          initProcesses(P);
+          s.isRunning = true;
+          s.info = 'Click on a process to crash it';
+          addTrace('Simulation started', 'consensus');
+          updateUI();
+        }
+
+
+        /**
+         * Reset the simulation.
+         */
+        function resetSimulation() {
+          var s = simulation;
+          s.isRunning = false;
+          s.isPaused  = false;
+          s.isResumed = true;
+          s.timestamp = 0;
+          s.time  = 0;
+          s.round = 0;
+          s.phase = 0;
+          s.roundTime = 0;
+          s.phaseTime = 0;
+          s.processes = [];
+          s.info = '';
+          
+          // Clear trace container
+          var traceContainer = document.getElementById('trace-container');
+          if (traceContainer) {
+            traceContainer.innerHTML = '';
+          }
+        }
+
+
+        /**
+         * Main simulation loop.
+         */
+        function simulationLoop(timestamp) {
+          var s = simulation;
+          if (!s.isRunning || s.isPaused) return;
+          if (s.isResumed) {
+            s.timestamp = timestamp;
+            s.isResumed = false;
+          }
+          else updateSimulation(timestamp);
+          renderSimulation();
+          updateUI();
+          requestAnimationFrame(simulationLoop);
+        }
+
+
+        /**
+         * Update the simulation state.
+         * @param {number} timestamp timestamp of the current frame
+         * @note
+         * It takes P-1 seconds to broadcast the value to all other processes. \
+         * It takes 1 second to compute the minimum value from the received values. \
+         * It takes P-1 seconds to broadcast the minimum value to all other processes. \
+         * It takes 1 second to check for consensus. \
+         * The total time for each round is 2P seconds.
+         */
+        function updateSimulation(timestamp) {
+          var s = simulation;
+          var P = s.processes.length;
+          var prevPhase = s.phase;
+          var prevRound = s.round;
+          
+          // Update the simulation time.
+          var dt = 0.001 * SIMULATION_SPEED * (timestamp - s.timestamp);
+          s.timestamp = timestamp;
+          s.time += dt;
+          // Compute the current round and phase.
+          var rt  = s.time % (2 * P);
+          s.round = Math.floor(s.time / (2 * P));
+          s.phase = rt < P-1? 0 : (rt < P? 1 : (rt < 2*P-1? 2 : 3));
+          s.roundTime = rt;
+          s.phaseTime = rt < P-1? rt : (rt < P? rt-P-1 : (rt < 2*P-1? rt-P : rt-2*P-1));
+          
+          // Add trace messages for phase transitions
+          if (s.phase !== prevPhase || s.round !== prevRound) {
+            if (s.phase === 0 && s.round > prevRound) {
+              addTrace('Starting new round', 'consensus');
+            } else if (s.phase === 1) {
+              addTrace('Computing minimum values', 'compute');
+            } else if (s.phase === 2) {
+              addTrace('Broadcasting minimum values', 'broadcast');
+            } else if (s.phase === 3) {
+              addTrace('Checking for consensus', 'consensus');
+            }
+          }
+          
+          // Perform round updates.
+          if (s.phase===1) updateReceivedValues();
+          else if (s.phase===2) computeMinValues();
+          else if (s.phase===3) updateReceivedValues();
+          else if (s.round>0 && s.phase===0) {
+            checkConsensus();
+            if (reachedConsensus()) {
+              s.isRunning = false;
+              s.info = 'Consensus reached!';
+              addTrace('Consensus reached!', 'consensus');
+              s.round -= 1;
+              s.phase = 3;
+              s.roundTime = 0;
+              s.phaseTime = 0;
+              for (var p of s.processes)
+                p.received = [];
+              if (achievedObjective()) {
+                unlockObjectives(s.objective);
+                addTrace('Objective achieved!', 'consensus');
+                if (s.objective) s.info += '\nYou have also achieved the objective!\nYou can now try the next objective.';
+              }
+              else {
+                addTrace('Objective not achieved. Try again.', 'consensus');
+                s.info += '\nYou have not achieved the objective.\nPlease try again.';
+              }
+            }
+            drawButtons();
+          }
+        }
+
+
+        /**
+         * Update the received values for each process.
+         */
+        function updateReceivedValues() {
+          var s = simulation;
+          var P = s.processes.length;
+          for (var i=0; i<P; ++i) {
+            var p = s.processes[i];
+            if (p.isCrashed || p.received.length !== 0) continue;
+            for (var j=i-1; j>=i-P; --j) {
+              var q = s.processes[(P+j) % P];
+              // Each process sends in clockwise order every second.
+              var prevPhaseStartTime = s.time - s.phaseTime - P;
+              var recvTime = prevPhaseStartTime + (P+i-j+1) % P;
+              if (q===p || (q.isCrashed && q.crashTime < recvTime)) continue;
+              p.received.push(q.value);
+            }
+          }
+        }
+
+
+        /**
+         * Get the received values for the current phase.
+         * @param p process node
+         * @returns {number[]} received values
+         */
+        function receivedValues(p) {
+          var s = simulation;
+          var P = s.processes.length;
+          var i = p.id;
+          var received = [];
+          if (p.isCrashed) return received;
+          for (var j=i-1; j>=i-P; --j) {
+            var q = s.processes[(P+j) % P];
+            // Each process sends in clockwise order every second.
+            var recvTime = s.time - s.phaseTime + (i-j) % P;
+            if (q===p || (q.isCrashed && q.crashTime < recvTime)) continue;
+            if (s.time > recvTime) received.push(q.value);
+          }
+          return received;
+        }
+
+
+        /**
+         * Compute the minimum values for each process.
+         */
+        function computeMinValues() {
+          var s = simulation;
+          for (var p of s.processes) {
+            if (p.isCrashed || p.received.length === 0) continue;
+            p.value = Math.min(p.value, ...p.received);
+            p.received = [];
+          }
+        }
+
+
+        /**
+         * Count the number of crashed processes.
+         */
+        function crashedProcesses() {
+          var s = simulation;
+          var n = 0;
+          for (var p of s.processes)
+            if (p.isCrashed) ++n;
+          return n;
+        }
+
+
+        /**
+         * Check for consensus among the processes.
+         */
+        function checkConsensus() {
+          var s = simulation;
+          for (var p of s.processes) {
+            if (p.isCrashed) continue;
+            p.isSatisfied = p.received.every(v => v===p.value);
+          }
+        }
+
+
+        /**
+         * Check if the processes have reached consensus.
+         */
+        function reachedConsensus() {
+          var s = simulation;
+          for (var p of s.processes) {
+            if (p.isCrashed) continue;
+            if (!p.isSatisfied) return false;
+          }
+          return true;
+        }
+
+
+        /**
+         * Check the simulation objective has been met.
+         */
+        function achievedObjective() {
+          var s = simulation;
+          switch (s.objective) {
+            case 'formin2':  // Force consensus to run for at least 2 rounds
+              return s.round>=1;
+            case 'forext3':  // Force consensus to run for 3 rounds
+              return s.round==2;
+            case 'forext4':  // Force consensus to run for 4 rounds
+              return s.round==3;
+            case 'cr3ext4':  // Force consensus to run for 4 rounds, crashing only 3 processes
+              return s.round==3 && crashedProcesses()===3;
+            default:  // Just exploring
+              return true;
+          }
+        }
+
+
+        /**
+         * Unlock the objectives based on the simulation results.
+         * @param {string} objective objective which was achieved
+         */
+        function unlockObjectives(objective) {
+          var options = IOBJECTIVE.options;
+          var shouldBreak = false;
+          for (var i=0; i<options.length; ++i) {
+            var opt = options[i];
+            opt.disabled = false;
+            if (shouldBreak) break;
+            if (opt.value===objective) shouldBreak = true;
+          }
+        }
+
+
+        /**
+         * Render the simulation.
+         * @note
+         * It takes P-1 seconds to broadcast the value to all other processes. \
+         * It takes 1 second to compute the minimum value from the received values. \
+         * It takes P-1 seconds to broadcast the minimum value to all other processes. \
+         * It takes 1 second to check for consensus. \
+         * The total time for each round is 2P seconds.
+         */
+        function renderSimulation() {
+          var s = simulation;
+          var P = s.processes.length;
+          // Draw the processes.
+          clearDisplay();
+          for (var p of s.processes)
+            drawProcess(p);
+          // Draw messages between processes.
+          if (s.roundTime > 0 && (s.phase===0 || s.phase===2)) {
+            for (var i=0; i<P; ++i) {
+              var di  = Math.floor(s.phaseTime);
+              var src = s.processes[i];
+              var dst = s.processes[(i+di+1) % P];
+              var prg = s.phaseTime - di;
+              if (src.isCrashed) continue;
+              drawMessage(src, dst, ''+src.value, prg);
+              
+              // Add trace message for broadcast (only once per message)
+              if (prg < 0.1 && s.isRunning && dst && !dst.isCrashed) {
+                addTrace(`P${src.id + 1} → P${dst.id + 1}: ${src.value}`, 'broadcast');
+              }
+            }
+          }
+          // Draw the round number and phase.
+          var ctx = CDISPLAY.getContext('2d');
+          ctx.fillStyle = MAIN_TEXT_COLOR;
+          ctx.textAlign = 'left';
+          ctx.font = MAIN_TEXT_FONT;
+          ctx.fillText(`Round: ${s.round + 1} : ${PHASE_NAMES[s.phase]}`, 20, 30);
+          // Draw any additional information.
+          if (!s.info) return;
+          var infos = s.info.split('\n');
+          ctx.textAlign = 'center';
+          for (var i=0; i<infos.length; ++i)
+            ctx.fillText(infos[i], CDISPLAY.width/2, CDISPLAY.height/2 + 20*i);
+        }
+
+
+        /**
+         * Initialize the process nodes.
+         * @param {number} P number of processes
+         */
+        function initProcesses(P) {
+          var s = simulation;
+          var W = CDISPLAY.width;
+          var H = CDISPLAY.height;
+          s.processes = [];
+          // Position each process in a circle.
+          var da = 2 * Math.PI / P;
+          var r  = Math.min(W, H)/2.5;
+          var cx = W/2, cy = H/2;
+          for (var i=0; i<P; ++i) {
+            var a = i * da;
+            var x = cx + r * Math.cos(a);
+            var y = cy + r * Math.sin(a);
+            var p = new Process(i, x, y, Math.floor(Math.random() * 100));  // Random initial value
+            s.processes.push(p);
+          }
+        }
+
+
+        /**
+         * Draw a process node.
+         * @param {Process} p process to draw
+         */
+        function drawProcess(p) {
+          var s   = simulation;
+          var ctx = CDISPLAY.getContext('2d');
+          
+          // Draw a subtle shadow
+          ctx.beginPath();
+          ctx.arc(p.x + 2, p.y + 2, PROCESS_RADIUS, 0, 2 * Math.PI);
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+          ctx.fill();
+          ctx.closePath();
+          
+          // Draw the process node circle with gradient
+          var gradient = ctx.createRadialGradient(p.x - 8, p.y - 8, 0, p.x, p.y, PROCESS_RADIUS);
+          if (p.isCrashed) {
+            // Red gradient for crashed processes
+            gradient.addColorStop(0, '#fee2e2');
+            gradient.addColorStop(0.7, '#fecaca');
+            gradient.addColorStop(1, '#ef4444');
+          } else {
+            var activeColor = processColor(s.time);
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(1, activeColor);
+          }
+          
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, PROCESS_RADIUS, 0, 2 * Math.PI);
+          ctx.fillStyle = gradient;
+          ctx.fill();
+          ctx.lineWidth   = p.isCrashed ? 3 : 2;
+          ctx.strokeStyle = p.isCrashed ? '#dc2626' : PROCESS_BORDER_COLOR;
+          ctx.stroke();
+          ctx.closePath();
+          
+          // Add a red pulsing effect for crashed processes
+          if (p.isCrashed) {
+            var pulseOpacity = 0.3 + 0.2 * Math.sin(s.time * 3);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, PROCESS_RADIUS + 5, 0, 2 * Math.PI);
+            ctx.strokeStyle = `rgba(239, 68, 68, ${pulseOpacity})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+          }
+          
+          // Draw the process node ID and value with better typography
+          ctx.font = 'bold 14px Inter, system-ui, sans-serif';
+          ctx.fillStyle = p.isCrashed ? '#dc2626' : PROCESS_TEXT_COLOR;
+          ctx.textAlign = 'center';
+          ctx.fillText(`P${p.id+1}`, p.x, p.y - 1.4 * PROCESS_RADIUS);
+          
+          ctx.font = 'bold 16px Inter, system-ui, sans-serif';
+          ctx.fillStyle = p.isCrashed ? '#dc2626' : PROCESS_TEXT_COLOR;
+          ctx.fillText(''+p.value, p.x, p.y + 0.3 * PROCESS_RADIUS);
+          
+          // Add "CRASHED" text for crashed processes
+          if (p.isCrashed) {
+            ctx.font = 'bold 10px Inter, system-ui, sans-serif';
+            ctx.fillStyle = '#dc2626';
+            ctx.fillText('CRASHED', p.x, p.y + 2.8 * PROCESS_RADIUS);
+          }
+          
+          // Draw the received values with improved styling
+          var received = s.phase===0 || s.phase===2? receivedValues(p) : p.received;
+          var recvtxt  = received.join(', ');
+          ctx.font = '12px Inter, system-ui, sans-serif';
+          ctx.fillStyle = p.isCrashed ? '#dc2626' : '#64748b';
+          ctx.fillText(recvtxt, p.x, p.y + 2 * PROCESS_RADIUS);
+        }
+
+
+        /**
+         * Generate a soft, elegant color for a process node.
+         * @param {number} time current simulation time
+         * @returns {string} color for the process node
+         */
+        function processColor(time) {
+          // Create soft, pastel colors that transition smoothly
+          var hue = (time * 30) % 360; // Slower color transition
+          var saturation = 25 + 15 * Math.sin(time * 0.5); // Gentle saturation variation
+          var lightness = 85 + 10 * Math.cos(time * 0.3); // High lightness for white theme
+          return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+
+
+        /**
+         * Draw a message (arrow) between two process nodes.
+         * @param {Process} src source process
+         * @param {Process} dst destination process
+         * @param {string} text message text
+         * @param {number} prg progress of the message (0 to 1)
+         */
+        function drawMessage(src, dst, text, prg) {
+          var ctx = CDISPLAY.getContext('2d');
+          
+          // Calculate arrow path
+          var dx  = dst.x - src.x;
+          var dy  = dst.y - src.y;
+          var r   = Math.sqrt(dx*dx + dy*dy);
+          var lbx = src.x + (PROCESS_RADIUS * dx) / r;
+          var lby = src.y + (PROCESS_RADIUS * dy) / r;
+          var ldx = dst.x - (PROCESS_RADIUS * dx) / r;
+          var ldy = dst.y - (PROCESS_RADIUS * dy) / r;
+          var lex = lbx + prg * (ldx - lbx);
+          var ley = lby + prg * (ldy - lby);
+          
+          // Draw arrow shadow
+          ctx.beginPath();
+          ctx.moveTo(lbx + 1, lby + 1);
+          ctx.lineTo(lex + 1, ley + 1);
+          ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+          ctx.lineWidth = ARROW_THICKNESS + 1;
+          ctx.stroke();
+          ctx.closePath();
+          
+          // Draw the arrow line with gradient
+          var gradient = ctx.createLinearGradient(lbx, lby, lex, ley);
+          gradient.addColorStop(0, ARROW_COLOR);
+          gradient.addColorStop(1, '#60a5fa');
+          
+          ctx.beginPath();
+          ctx.moveTo(lbx, lby);
+          ctx.lineTo(lex, ley);
+          ctx.strokeStyle = gradient;
+          ctx.lineWidth = ARROW_THICKNESS;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+          ctx.closePath();
+          
+          // Draw the arrow head with improved styling
+          var a   = Math.atan2(dy, dx);
+          var h1x = lex - ARROW_HEAD * Math.cos(a - ARROW_ANGLE);
+          var h1y = ley - ARROW_HEAD * Math.sin(a - ARROW_ANGLE);
+          var h2x = lex - ARROW_HEAD * Math.cos(a + ARROW_ANGLE);
+          var h2y = ley - ARROW_HEAD * Math.sin(a + ARROW_ANGLE);
+          
+          ctx.beginPath();
+          ctx.moveTo(lex, ley);
+          ctx.lineTo(h1x, h1y);
+          ctx.lineTo(h2x, h2y);
+          ctx.closePath();
+          ctx.fillStyle = ARROW_COLOR;
+          ctx.fill();
+          
+          // Draw message value with background
+          var mx = (lbx + lex) / 2;
+          var my = (lby + ley) / 2;
+          
+          // Message background
+          ctx.font = '7px Inter, system-ui, sans-serif';
+          var textWidth = ctx.measureText(text).width;
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.fillRect(mx - textWidth/2 - 4, my - 16, textWidth + 8, 16);
+          ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(mx - textWidth/2 - 4, my - 16, textWidth + 8, 16);
+          
+          // Message text
+          ctx.fillStyle = ARROW_TEXT_COLOR;
+          ctx.textAlign = 'center';
+          ctx.fillText(text, mx, my - 4);
+        }
+
+
+        /**
+         * Clear the display.
+         */
+        function clearDisplay() {
+          var ctx = CDISPLAY.getContext('2d');
+          ctx.clearRect(0, 0, CDISPLAY.width, CDISPLAY.height);
+        }
+
+
+        /**
+         * Render button text.
+         */
+        function drawButtons() {
+          var s = simulation;
+          BSTART.textContent = s.isRunning? (s.isPaused? '▶️ Resume' : '⏸️ Pause') : '▶️ Start Simulation';
+          BSTOP.textContent = '🔄 Reset Simulation';
+        }
+
+
+        /**
+         * Update the UI status displays.
+         */
+        function updateUI() {
+          var s = simulation;
+          var activeCount = s.processes.filter(p => !p.isCrashed).length;
+          var crashedCount = s.processes.filter(p => p.isCrashed).length;
+          
+          // Update status display
+          safeSetText('round-display', s.round + 1);
+          safeSetText('phase-display', PHASE_NAMES[s.phase]?.split(' ').slice(0, 3).join(' ') || 'Ready');
+          safeSetText('active-count', activeCount);
+          safeSetText('crashed-count', crashedCount);
+          
+          // Update phase indicator
+          safeSetText('phaseIndicator', `Round ${s.round + 1}: ${PHASE_NAMES[s.phase] || 'Ready'}`);
+          
+          // Update process display
+          updateProcessDisplay();
+        }
+
+        /**
+         * Update the process display badges.
+         */
+        function updateProcessDisplay() {
+          var processDisplay = document.getElementById('process-display');
+          if (!processDisplay) return;
+          
+          processDisplay.innerHTML = '';
+          
+          for (var p of simulation.processes) {
+            var badge = document.createElement('div');
+            badge.className = `process-badge ${p.isCrashed ? 'crashed' : 'active'}`;
+            badge.textContent = `P${p.id + 1}: ${p.value}`;
+            processDisplay.appendChild(badge);
+          }
+        }
+
+        /**
+         * Safely set text content of an element.
+         */
+        function safeSetText(id, text) {
+          var element = document.getElementById(id);
+          if (element) {
+            element.textContent = text;
+          }
+        }
+
+        /**
+         * Add a trace message to the execution trace.
+         */
+        function addTrace(message, type) {
+          var traceContainer = document.getElementById('trace-container');
+          if (!traceContainer) return;
+          
+          var traceStep = document.createElement('div');
+          traceStep.className = `log-entry ${type}`;
+          traceStep.textContent = `[Round ${simulation.round + 1}] ${message}`;
+          traceContainer.appendChild(traceStep);
+          traceContainer.scrollTop = traceContainer.scrollHeight;
+          
+          // Limit trace messages to prevent overflow
+          if (traceContainer.children.length > 50) {
+            traceContainer.removeChild(traceContainer.firstChild);
+          }
+        }
+    </script>
 </body>
 </html>
