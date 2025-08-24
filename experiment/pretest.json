@@ -36,6 +36,23 @@
       "difficulty": "beginner"
     },
     {
+      "question": "What is the fail-stop model in distributed systems?",
+      "answers": {
+        "a": "A model where processes fail and then restart automatically",
+        "b": "A model where processes may crash and stop permanently",
+        "c": "A model where processes never fail",
+        "d": "A model where processes send incorrect messages intentionally"
+      },
+      "explanations": {
+        "a": "Incorrect: Processes do not restart in the fail-stop model.",
+        "b": "Correct: In the fail-stop model, processes may crash and stop permanently.",
+        "c": "Incorrect: The model specifically accounts for process failures.",
+        "d": "Incorrect: This describes Byzantine failures, not fail-stop failures."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
       "question": "What happens in a round if a process does not broadcast its current value?",
       "answers": {
         "a": "The process is considered non-faulty",
@@ -85,6 +102,57 @@
       },
       "correctAnswer": "b",
       "difficulty": "intermediate"
+    },
+    {
+      "question": "In the consensus algorithm, what mathematical operation ensures agreement among processes?",
+      "answers": {
+        "a": "Taking the maximum of all received values",
+        "b": "Taking the minimum of all received values including own value",
+        "c": "Taking the average of all received values",
+        "d": "Taking the sum of all received values"
+      },
+      "explanations": {
+        "a": "Incorrect: The algorithm uses minimum, not maximum.",
+        "b": "Correct: Each process updates x to min(x, all received values).",
+        "c": "Incorrect: Average is not used in this consensus algorithm.",
+        "d": "Incorrect: Sum is not used in this consensus algorithm."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "What is the key insight behind why the algorithm guarantees agreement in f+1 rounds?",
+      "answers": {
+        "a": "All processes will have failed by round f+1",
+        "b": "At least one round exists where all non-faulty processes can broadcast",
+        "c": "The minimum value is always known from the first round",
+        "d": "Byzantine processes are eliminated after f rounds"
+      },
+      "explanations": {
+        "a": "Incorrect: The algorithm assumes some processes remain non-faulty.",
+        "b": "Correct: There exists at least one round where all good processes can broadcast their values.",
+        "c": "Incorrect: The minimum value may not be known initially due to failures.",
+        "d": "Incorrect: The algorithm assumes non-Byzantine processes throughout."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "What condition must be satisfied for the consensus algorithm to guarantee termination and correctness?",
+      "answers": {
+        "a": "All processes must start with the same initial value",
+        "b": "No more than f processes can fail, where f < n",
+        "c": "Processes must communicate in a specific order",
+        "d": "The network must be completely connected at all times"
+      },
+      "explanations": {
+        "a": "Incorrect: Processes can start with different initial values.",
+        "b": "Correct: The algorithm tolerates up to f failures where f < n.",
+        "c": "Incorrect: There is no specific communication order required.",
+        "d": "Incorrect: The algorithm can handle network partitions as long as failure assumptions hold."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
     }
   ]
 }
