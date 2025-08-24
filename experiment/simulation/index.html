@@ -720,7 +720,7 @@
 
         <div class="observations-panel">
             <div class="status-section">
-                <h4>Logs</h4>
+                <h4>Execution Trace</h4>
                 <div class="logs" id="trace-container">
                     <div class="log-entry consensus">[System] Distributed Consensus Protocol initialized</div>
                     <div class="log-entry consensus">[Info] Click 'Start Simulation' to begin consensus algorithm</div>
@@ -788,6 +788,39 @@
         const MAIN_TEXT_FONT  = 'bold 16px Inter, system-ui, sans-serif';
         /** Radius of each process node. */
         const PROCESS_RADIUS = 25;
+        /** Default values (used only as fallbacks) */
+        const DEFAULT_BASE_RING_SCALE = 3; // higher => closer to center
+        const DEFAULT_MIN_NODE_GAP = 10;   // px
+
+        /** Clamp helper */
+        function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+        /**
+         * Compute a dynamic ring scale based on canvas size and process count.
+         * Larger scale => nodes closer to center (smaller radius).
+         */
+        function computeRingScale(width, height, processCount) {
+          const minDim = Math.min(width, height);
+          // Map size: small screens => closer (bigger scale), large screens => a bit wider
+          const sSmall = 3.8; // ~phones/smaller panes
+          const sLarge = 2.8; // ~large desktop panes
+          const t = clamp((minDim - 500) / (1400 - 500), 0, 1); // 0 at 500px, 1 at 1400px
+          const scaleBySize = sSmall + (sLarge - sSmall) * t;
+          // Nudge inwards for larger P so everything fits nicely
+          const countBias = processCount >= 12 ? 0.4 : processCount >= 8 ? 0.25 : 0;
+          const scale = scaleBySize + countBias;
+          return clamp(scale, 2.6, 4.5);
+        }
+
+        /**
+         * Compute a dynamic minimum gap between neighboring nodes along the ring.
+         * Scales with canvas size with sensible bounds.
+         */
+        function computeMinNodeGap(width, height) {
+          const minDim = Math.min(width, height);
+          // 0.8% of min dim, clamped to [6, 16] pixels
+          return Math.round(clamp(minDim * 0.008, 6, 16));
+        }
         /** Color for active processes. */
         const PROCESS_ACTIVE_COLOR  = '#10b981';
         /** Color for crashed processes. */
@@ -813,6 +846,11 @@
           'Each process broadcasts the minimum value',
           'Each process checks for consensus'
         ];
+  /**
+   * Whether to draw the round/phase label on the canvas.
+   * Keep this false to avoid duplicate with the floating phase indicator badge.
+   */
+  const SHOW_CANVAS_ROUND_LABEL = false;
 
 
 
@@ -1319,12 +1357,14 @@
               }
             }
           }
-          // Draw the round number and phase.
+          // Draw the round number and phase (optional; disabled to avoid duplicate with badge).
           var ctx = CDISPLAY.getContext('2d');
-          ctx.fillStyle = MAIN_TEXT_COLOR;
-          ctx.textAlign = 'left';
-          ctx.font = MAIN_TEXT_FONT;
-          ctx.fillText(`Round: ${s.round + 1} : ${PHASE_NAMES[s.phase]}`, 20, 30);
+          if (SHOW_CANVAS_ROUND_LABEL) {
+            ctx.fillStyle = MAIN_TEXT_COLOR;
+            ctx.textAlign = 'left';
+            ctx.font = MAIN_TEXT_FONT;
+            ctx.fillText(`Round: ${s.round + 1} : ${PHASE_NAMES[s.phase]}`, 20, 30);
+          }
           // Draw any additional information.
           if (!s.info) return;
           var infos = s.info.split('\n');
@@ -1345,7 +1385,13 @@
           s.processes = [];
           // Position each process in a circle.
           var da = 2 * Math.PI / P;
-          var r  = Math.min(W, H)/2.5;
+          // Compute dynamic layout based on current canvas size
+          var ringScale = computeRingScale(W, H, P) || DEFAULT_BASE_RING_SCALE;
+          var nodeGap   = computeMinNodeGap(W, H) || DEFAULT_MIN_NODE_GAP;
+          // Base radius to bring nodes closer, with safety to avoid overlap on large P
+          var baseR = Math.min(W, H) / ringScale;
+          var minR  = (P * (2 * PROCESS_RADIUS + nodeGap)) / (2 * Math.PI);
+          var r  = Math.max(baseR, minR);
           var cx = W/2, cy = H/2;
           for (var i=0; i<P; ++i) {
             var a = i * da;
