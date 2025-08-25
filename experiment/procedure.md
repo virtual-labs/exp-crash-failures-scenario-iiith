@@ -1,5 +1,3 @@
-### Procedure
-
 1. **Setup the Simulation:**
    - Open the simulation interface in a browser.
 
