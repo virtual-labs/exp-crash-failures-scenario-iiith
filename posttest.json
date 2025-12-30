@@ -1,0 +1,158 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "Which process must crash in order for consensus to take at least 2 rounds?",
+      "answers": {
+        "a": "The process with the highest value/ID",
+        "b": "The process with the lowest value/ID",
+        "c": "A process chosen at random",
+        "d": "All processes except one"
+      },
+      "explanations": {
+        "a": "Incorrect: Crashing the highest value process does not necessarily delay consensus.",
+        "b": "Correct: The process with the lowest value/ID must crash to force consensus to take at least 2 rounds.",
+        "c": "Incorrect: Random crashes may not guarantee a delay of 2 rounds.",
+        "d": "Incorrect: This scenario eliminates consensus rather than delays it."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What happens when no processes crash during the consensus algorithm?",
+      "answers": {
+        "a": "Consensus is achieved in exactly f+1 rounds",
+        "b": "Consensus is achieved in 1 round",
+        "c": "Consensus cannot be achieved",
+        "d": "The algorithm runs indefinitely"
+      },
+      "explanations": {
+        "a": "Incorrect: Without failures, consensus can be achieved faster.",
+        "b": "Correct: If no processes crash, all can broadcast in round 1 and consensus is achieved immediately.",
+        "c": "Incorrect: Consensus is easier to achieve without failures.",
+        "d": "Incorrect: The algorithm terminates when consensus is reached."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the fail-stop model, what characterizes a crashed process?",
+      "answers": {
+        "a": "It sends incorrect messages to other processes",
+        "b": "It stops executing and never restarts",
+        "c": "It continues running but ignores messages",
+        "d": "It randomly delays its messages"
+      },
+      "explanations": {
+        "a": "Incorrect: This describes Byzantine behavior, not fail-stop.",
+        "b": "Correct: A crashed process stops executing and never restarts in the fail-stop model.",
+        "c": "Incorrect: A crashed process stops completely.",
+        "d": "Incorrect: Message delays are not part of the fail-stop model."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "When must the lowest value/ID process crash for consensus to take at least 2 rounds?",
+      "answers": {
+        "a": "After it has broadcast its value in round 1",
+        "b": "Before it broadcasts its value to all processes in round 1",
+        "c": "At any point during the simulation",
+        "d": "Only after all processes reach consensus"
+      },
+      "explanations": {
+        "a": "Incorrect: Crashing after broadcasting will not affect the first round of consensus.",
+        "b": "Correct: Crashing before broadcasting ensures other processes cannot receive the lowest value in round 1.",
+        "c": "Incorrect: Timing of the crash is crucial to delaying consensus.",
+        "d": "Incorrect: Crashes after consensus does not influence the rounds."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "What determines the final consensus value in the algorithm?",
+      "answers": {
+        "a": "The value of the process with the highest ID",
+        "b": "The average of all initial values",
+        "c": "The minimum value among all non-faulty processes",
+        "d": "The value of the last process to broadcast"
+      },
+      "explanations": {
+        "a": "Incorrect: The highest ID does not determine the consensus value.",
+        "b": "Incorrect: The algorithm uses minimum, not average.",
+        "c": "Correct: The consensus value is the minimum among all values from non-faulty processes.",
+        "d": "Incorrect: Timing of broadcast does not determine the consensus value."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Why does the algorithm guarantee that consensus will be reached in exactly f+1 rounds in the worst case?",
+      "answers": {
+        "a": "Because f processes will definitely crash",
+        "b": "Because there must be at least one round where all remaining processes broadcast",
+        "c": "Because the minimum value is always found in the last round",
+        "d": "Because Byzantine processes are eliminated after f rounds"
+      },
+      "explanations": {
+        "a": "Incorrect: Not all f processes need to crash.",
+        "b": "Correct: In f+1 rounds, there must be at least one round where all non-faulty processes can broadcast.",
+        "c": "Incorrect: The minimum value can be found earlier depending on crash patterns.",
+        "d": "Incorrect: The algorithm assumes non-Byzantine processes."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Which processes must crash in order for consensus to take at least 3 rounds?",
+      "answers": {
+        "a": "Only the process with the highest value",
+        "b": "The process with the lowest value first, and processes with lowest value in next round",
+        "c": "All processes except two",
+        "d": "A random subset of processes"
+      },
+      "explanations": {
+        "a": "Incorrect: Crashing only the highest value process does not delay consensus to 3 rounds.",
+        "b": "Correct: The lowest value process and processed that received its message must crash to delay consensus to 3 rounds.",
+        "c": "Incorrect: This is overly restrictive and does not align with the simulation observations.",
+        "d": "Incorrect: Random crashes do not ensure the conditions for delayed consensus."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "What is the theoretical maximum number of rounds needed for consensus with n processes and f failures?",
+      "answers": {
+        "a": "f rounds",
+        "b": "f+1 rounds",
+        "c": "n rounds", 
+        "d": "n-f rounds"
+      },
+      "explanations": {
+        "a": "Incorrect: The algorithm requires one additional round beyond the maximum failures.",
+        "b": "Correct: The algorithm guarantees consensus in at most f+1 rounds.",
+        "c": "Incorrect: The number of rounds is not directly related to n.",
+        "d": "Incorrect: This does not represent the correct bound."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "When should processes crash in the second round, in order for consensus to take 3 rounds?",
+      "answers": {
+        "a": "Processes with the lowest value, before they manage to send to all processes without the lowest value",
+        "b": "Any process can crash at any time to ensure consensus takes 3 rounds",
+        "c": "Processes with the highest value/ID, before they send to all processes",
+        "d": "One of the processes with the lowest value, before it sends to all processes without the lowest value"
+      },
+      "explanations": {
+        "a": "Correct: Crashing the lowest value processes before they send to all processes without the lowest value ensures consensus takes 3 rounds.",
+        "b": "Incorrect: Random crashes will not necessarily delay consensus for 3 rounds.",
+        "c": "Incorrect: Crashing the highest value processes does not delay consensus for 3 rounds.",
+        "d": "Incorrect: Crashing one of the lowest value processes does not ensure consensus takes 3 rounds."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    }
+  ]
+}
