@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Distributed Consensus - Crash Failures Scenario</title>
     <style>
         * {
@@ -16,7 +18,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #1a202c;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         .app-container {
@@ -514,36 +516,140 @@
             color: #059669;
         }
 
+        /* Tablet Layout */
         @media (max-width: 1200px) {
             .app-container {
-                grid-template-columns: 1fr;
-                grid-template-rows: 1fr auto auto;
+                grid-template-columns: 280px 1fr;
+                grid-template-rows: 1fr auto;
                 height: 100vh;
                 gap: 10px;
                 padding: 10px;
             }
             
             .controls-panel {
-                height: 300px;
-                order: 2;
-            }
-            
-            .legend-panel {
-                bottom: 60px;
+                height: auto;
+                max-height: 100%;
+                order: 1;
             }
             
             .experiment-area {
-                order: 1;
+                order: 2;
                 min-height: 400px;
             }
             
             .observations-panel {
-                height: 250px;
+                grid-column: 1 / -1;
+                height: 200px;
                 order: 3;
             }
         }
         
+        /* Mobile Layout */
         @media (max-width: 768px) {
+            body {
+                overflow-y: auto;
+            }
+            
+            .app-container {
+                display: flex;
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+                gap: 10px;
+                padding: 10px;
+                border-radius: 0;
+            }
+            
+            .controls-panel {
+                height: auto;
+                max-height: none;
+                order: 1;
+                padding: 15px;
+                overflow-y: visible;
+            }
+            
+            .control-section {
+                padding: 15px;
+            }
+            
+            .control-section h3 {
+                font-size: 1rem;
+            }
+            
+            .input-group {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+            
+            .btn {
+                padding: 14px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .experiment-area {
+                order: 2;
+                min-height: 350px;
+                height: 350px;
+            }
+            
+            .simulation-area {
+                padding: 10px;
+                min-height: 330px;
+            }
+            
+            .phase-indicator {
+                top: 5px;
+                right: 5px;
+                padding: 4px 8px;
+                font-size: 0.65rem;
+                max-width: 140px;
+                text-align: center;
+                line-height: 1.3;
+            }
+            
+            .legend-panel {
+                display: none; /* Hide on mobile to save space */
+            }
+
+            .processes-panel {
+                position: absolute;
+                bottom: 5px;
+                right: 5px;
+                padding: 6px;
+                min-width: auto;
+                max-width: 90px;
+                background: rgba(255, 255, 255, 0.85);
+            }
+            
+            .processes-panel h4 {
+                font-size: 0.65rem;
+                margin-bottom: 4px;
+            }
+            
+            .process-display {
+                gap: 2px;
+            }
+            
+            .process-badge {
+                padding: 2px 4px;
+                font-size: 0.55rem;
+            }
+            
+            .observations-panel {
+                height: auto;
+                order: 3;
+                padding: 15px;
+            }
+            
+            .status-section {
+                padding: 12px;
+                margin-bottom: 10px;
+            }
+            
+            .status-section h4 {
+                font-size: 0.9rem;
+            }
+            
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
                 gap: 8px;
@@ -551,100 +657,158 @@
             
             .stat-card {
                 padding: 10px;
-                min-height: 80px;
+                min-height: 70px;
             }
             
             .stat-value {
-                font-size: 1.3rem;
+                font-size: 1.2rem;
             }
             
-            .legend-panel {
-                position: relative;
-                bottom: auto;
-                left: auto;
-                margin-top: 15px;
-                margin-bottom: 15px;
-                min-width: auto;
-                width: 100%;
+            .stat-label {
+                font-size: 0.7rem;
             }
-
-            .legend-items {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 6px;
+            
+            .stat-description {
+                font-size: 0.6rem;
             }
-
-            .legend-item {
+            
+            .logs {
+                height: 200px;
                 font-size: 0.75rem;
-                gap: 8px;
+                padding: 10px;
             }
-
-            .legend-color {
-                width: 12px;
-                height: 12px;
+            
+            .log-entry {
+                padding: 5px 8px;
+                font-size: 0.7rem;
             }
-
-            .processes-panel {
-                position: relative;
-                bottom: auto;
-                right: auto;
-                margin-top: 15px;
-                min-width: auto;
-                width: 100%;
+            
+            .scenario-section {
+                padding: 12px;
+            }
+            
+            .scenario-section h4 {
+                font-size: 0.85rem;
+            }
+            
+            .scenario-section p {
+                font-size: 0.75rem;
             }
         }
         
-        /* Mobile Portrait Orientation Overlay */
-        .rotate-device-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            z-index: 10000;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .rotate-device-overlay .rotate-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            animation: rotateAnimation 2s ease-in-out infinite;
-        }
-
-        .rotate-device-overlay h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-        }
-
-        .rotate-device-overlay p {
-            font-size: 1rem;
-            opacity: 0.9;
-            line-height: 1.5;
-            max-width: 300px;
-        }
-
-        @keyframes rotateAnimation {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-15deg); }
-            75% { transform: rotate(15deg); }
-        }
-
-        @media screen and (max-width: 768px) and (orientation: portrait) {
-            .rotate-device-overlay {
-                display: flex !important;
+        /* Small Mobile Layout */
+        @media (max-width: 480px) {
+            .app-container {
+                padding: 8px;
+                gap: 8px;
             }
             
-            .app-container {
-                display: none !important;
+            .controls-panel {
+                padding: 12px;
             }
+            
+            .control-section {
+                padding: 12px;
+            }
+            
+            .control-section h3 {
+                font-size: 0.9rem;
+            }
+            
+            .input-group {
+                padding: 10px;
+                margin-bottom: 12px;
+            }
+            
+            .input-group label {
+                font-size: 0.8rem;
+            }
+            
+            select, input {
+                padding: 8px 10px;
+                font-size: 0.85rem;
+            }
+            
+            .btn {
+                padding: 12px 14px;
+                font-size: 0.85rem;
+            }
+            
+            .experiment-area {
+                min-height: 300px;
+                height: 300px;
+            }
+            
+            .simulation-area {
+                min-height: 280px;
+            }
+            
+            .phase-indicator {
+                top: 5px;
+                right: 5px;
+                padding: 3px 6px;
+                font-size: 0.6rem;
+                max-width: 120px;
+                line-height: 1.2;
+            }
+            
+            .legend-panel {
+                display: none; /* Keep hidden on small mobile */
+            }
+            
+            .processes-panel {
+                padding: 4px;
+                min-width: auto;
+                max-width: 75px;
+                background: rgba(255, 255, 255, 0.85);
+                bottom: 5px;
+                right: 5px;
+            }
+            
+            .processes-panel h4 {
+                font-size: 0.6rem;
+                margin-bottom: 3px;
+            }
+            
+            .process-badge {
+                padding: 1px 3px;
+                font-size: 0.5rem;
+                white-space: nowrap;
+            }
+            
+            .observations-panel {
+                padding: 12px;
+            }
+            
+            .stats-grid {
+                gap: 6px;
+            }
+            
+            .stat-card {
+                padding: 8px;
+                min-height: 60px;
+            }
+            
+            .stat-value {
+                font-size: 1rem;
+            }
+            
+            .stat-label {
+                font-size: 0.65rem;
+            }
+            
+            .stat-description {
+                display: none;
+            }
+            
+            .logs {
+                height: 150px;
+            }
+        }
+        
+        /* Hide rotate overlay - we now support portrait mode */
+        .rotate-device-overlay {
+            display: none !important;
         }
     </style>
 </head>
@@ -929,13 +1093,28 @@
           resizeCanvas();
           window.addEventListener('resize', resizeCanvas);
           
-          CDISPLAY.addEventListener('click', e => {
-            console.log('CDISPLAY click');
+          // Handle both click and touch events for mobile support
+          function handleCanvasInteraction(e) {
+            e.preventDefault();
             var r = CDISPLAY.getBoundingClientRect();
-            var x = (e.clientX - r.left) * CDISPLAY.width  / r.width;
-            var y = (e.clientY - r.top)  * CDISPLAY.height / r.height;
+            var clientX, clientY;
+            
+            if (e.type === 'touchstart' || e.type === 'touchend') {
+              var touch = e.changedTouches[0];
+              clientX = touch.clientX;
+              clientY = touch.clientY;
+            } else {
+              clientX = e.clientX;
+              clientY = e.clientY;
+            }
+            
+            var x = (clientX - r.left) * CDISPLAY.width  / r.width;
+            var y = (clientY - r.top)  * CDISPLAY.height / r.height;
             onProcessClick(x, y);
-          });
+          }
+          
+          CDISPLAY.addEventListener('click', handleCanvasInteraction);
+          CDISPLAY.addEventListener('touchend', handleCanvasInteraction, { passive: false });
           
           // Let some rendering happen.
           var s = simulation;
@@ -947,6 +1126,11 @@
           s.isResumed = false;
           s.isRunning = false;  // Set to not running initially
           drawButtons();  // Call after setting the correct state
+          
+          // Handle orientation changes on mobile
+          window.addEventListener('orientationchange', function() {
+            setTimeout(resizeCanvas, 100);
+          });
         }
 
 
@@ -956,16 +1140,22 @@
         function resizeCanvas() {
           var container = CDISPLAY.parentElement;
           var containerRect = container.getBoundingClientRect();
-          var padding = 40; // Account for container padding and panels
+          var isMobile = window.innerWidth <= 768;
+          var isSmallMobile = window.innerWidth <= 480;
+          var padding = isMobile ? 20 : 40; // Less padding on mobile
           
-          var newWidth = Math.max(600, containerRect.width - padding);
-          var newHeight = Math.max(400, containerRect.height - padding);
+          // Adjust minimum sizes for mobile
+          var minWidth = isSmallMobile ? 280 : (isMobile ? 320 : 600);
+          var minHeight = isSmallMobile ? 250 : (isMobile ? 300 : 400);
+          
+          var newWidth = Math.max(minWidth, containerRect.width - padding);
+          var newHeight = Math.max(minHeight, containerRect.height - padding);
           
           // Set canvas size
           CDISPLAY.width = newWidth;
           CDISPLAY.height = newHeight;
           
-          // Update CSS size to match
+          // Set CSS size to match
           CDISPLAY.style.width = newWidth + 'px';
           CDISPLAY.style.height = newHeight + 'px';
           
@@ -1054,11 +1244,15 @@
         function onProcessClick(x, y) {
           var s = simulation;
           if (!s.isRunning) return;
+          var radius = getProcessRadius();
+          // Increase touch target on mobile for better usability
+          var isMobile = window.innerWidth <= 768;
+          var touchRadius = isMobile ? radius * 1.5 : radius;
           for (var p of s.processes) {
             var dx = x - p.x;
             var dy = y - p.y;
             var r  = Math.sqrt(dx*dx + dy*dy);
-            if (r >= PROCESS_RADIUS || p.isCrashed) continue;
+            if (r >= touchRadius || p.isCrashed) continue;
             p.isCrashed = true;
             p.crashTime = s.time;
             addTrace(`Process P${p.id + 1} crashed!`, 'crash');
@@ -1382,6 +1576,7 @@
           var s = simulation;
           var W = CDISPLAY.width;
           var H = CDISPLAY.height;
+          var processRadius = getProcessRadius();
           s.processes = [];
           // Position each process in a circle.
           var da = 2 * Math.PI / P;
@@ -1390,7 +1585,7 @@
           var nodeGap   = computeMinNodeGap(W, H) || DEFAULT_MIN_NODE_GAP;
           // Base radius to bring nodes closer, with safety to avoid overlap on large P
           var baseR = Math.min(W, H) / ringScale;
-          var minR  = (P * (2 * PROCESS_RADIUS + nodeGap)) / (2 * Math.PI);
+          var minR  = (P * (2 * processRadius + nodeGap)) / (2 * Math.PI);
           var r  = Math.max(baseR, minR);
           var cx = W/2, cy = H/2;
           for (var i=0; i<P; ++i) {
@@ -1404,22 +1599,36 @@
 
 
         /**
+         * Get the current process radius based on screen size.
+         */
+        function getProcessRadius() {
+          var isMobile = window.innerWidth <= 768;
+          var isSmallMobile = window.innerWidth <= 480;
+          if (isSmallMobile) return 18;
+          if (isMobile) return 20;
+          return PROCESS_RADIUS;
+        }
+
+        /**
          * Draw a process node.
          * @param {Process} p process to draw
          */
         function drawProcess(p) {
           var s   = simulation;
           var ctx = CDISPLAY.getContext('2d');
+          var radius = getProcessRadius();
+          var isMobile = window.innerWidth <= 768;
+          var isSmallMobile = window.innerWidth <= 480;
           
           // Draw a subtle shadow
           ctx.beginPath();
-          ctx.arc(p.x + 2, p.y + 2, PROCESS_RADIUS, 0, 2 * Math.PI);
+          ctx.arc(p.x + 2, p.y + 2, radius, 0, 2 * Math.PI);
           ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
           ctx.fill();
           ctx.closePath();
           
           // Draw the process node circle with gradient
-          var gradient = ctx.createRadialGradient(p.x - 8, p.y - 8, 0, p.x, p.y, PROCESS_RADIUS);
+          var gradient = ctx.createRadialGradient(p.x - 8, p.y - 8, 0, p.x, p.y, radius);
           if (p.isCrashed) {
             // Red gradient for crashed processes
             gradient.addColorStop(0, '#fee2e2');
@@ -1432,7 +1641,7 @@
           }
           
           ctx.beginPath();
-          ctx.arc(p.x, p.y, PROCESS_RADIUS, 0, 2 * Math.PI);
+          ctx.arc(p.x, p.y, radius, 0, 2 * Math.PI);
           ctx.fillStyle = gradient;
           ctx.fill();
           ctx.lineWidth   = p.isCrashed ? 3 : 2;
@@ -1444,36 +1653,42 @@
           if (p.isCrashed) {
             var pulseOpacity = 0.3 + 0.2 * Math.sin(s.time * 3);
             ctx.beginPath();
-            ctx.arc(p.x, p.y, PROCESS_RADIUS + 5, 0, 2 * Math.PI);
+            ctx.arc(p.x, p.y, radius + 5, 0, 2 * Math.PI);
             ctx.strokeStyle = `rgba(239, 68, 68, ${pulseOpacity})`;
             ctx.lineWidth = 2;
             ctx.stroke();
             ctx.closePath();
           }
           
+          // Adjust font sizes for mobile
+          var labelFontSize = isSmallMobile ? 10 : (isMobile ? 11 : 14);
+          var valueFontSize = isSmallMobile ? 12 : (isMobile ? 13 : 16);
+          var crashedFontSize = isSmallMobile ? 7 : (isMobile ? 8 : 10);
+          var receivedFontSize = isSmallMobile ? 8 : (isMobile ? 9 : 12);
+          
           // Draw the process node ID and value with better typography
-          ctx.font = 'bold 14px Inter, system-ui, sans-serif';
+          ctx.font = `bold ${labelFontSize}px Inter, system-ui, sans-serif`;
           ctx.fillStyle = p.isCrashed ? '#dc2626' : PROCESS_TEXT_COLOR;
           ctx.textAlign = 'center';
-          ctx.fillText(`P${p.id+1}`, p.x, p.y - 1.4 * PROCESS_RADIUS);
+          ctx.fillText(`P${p.id+1}`, p.x, p.y - 1.4 * radius);
           
-          ctx.font = 'bold 16px Inter, system-ui, sans-serif';
+          ctx.font = `bold ${valueFontSize}px Inter, system-ui, sans-serif`;
           ctx.fillStyle = p.isCrashed ? '#dc2626' : PROCESS_TEXT_COLOR;
-          ctx.fillText(''+p.value, p.x, p.y + 0.3 * PROCESS_RADIUS);
+          ctx.fillText(''+p.value, p.x, p.y + 0.3 * radius);
           
           // Add "CRASHED" text for crashed processes
           if (p.isCrashed) {
-            ctx.font = 'bold 10px Inter, system-ui, sans-serif';
+            ctx.font = `bold ${crashedFontSize}px Inter, system-ui, sans-serif`;
             ctx.fillStyle = '#dc2626';
-            ctx.fillText('CRASHED', p.x, p.y + 2.8 * PROCESS_RADIUS);
+            ctx.fillText('CRASHED', p.x, p.y + 2.8 * radius);
           }
           
           // Draw the received values with improved styling
           var received = s.phase===0 || s.phase===2? receivedValues(p) : p.received;
           var recvtxt  = received.join(', ');
-          ctx.font = '12px Inter, system-ui, sans-serif';
+          ctx.font = `${receivedFontSize}px Inter, system-ui, sans-serif`;
           ctx.fillStyle = p.isCrashed ? '#dc2626' : '#64748b';
-          ctx.fillText(recvtxt, p.x, p.y + 2 * PROCESS_RADIUS);
+          ctx.fillText(recvtxt, p.x, p.y + 2 * radius);
         }
 
 
@@ -1500,15 +1715,22 @@
          */
         function drawMessage(src, dst, text, prg) {
           var ctx = CDISPLAY.getContext('2d');
+          var radius = getProcessRadius();
+          var isMobile = window.innerWidth <= 768;
+          var isSmallMobile = window.innerWidth <= 480;
+          
+          // Adjust arrow dimensions for mobile
+          var arrowThickness = isSmallMobile ? 2 : (isMobile ? 2.5 : ARROW_THICKNESS);
+          var arrowHead = isSmallMobile ? 10 : (isMobile ? 12 : ARROW_HEAD);
           
           // Calculate arrow path
           var dx  = dst.x - src.x;
           var dy  = dst.y - src.y;
           var r   = Math.sqrt(dx*dx + dy*dy);
-          var lbx = src.x + (PROCESS_RADIUS * dx) / r;
-          var lby = src.y + (PROCESS_RADIUS * dy) / r;
-          var ldx = dst.x - (PROCESS_RADIUS * dx) / r;
-          var ldy = dst.y - (PROCESS_RADIUS * dy) / r;
+          var lbx = src.x + (radius * dx) / r;
+          var lby = src.y + (radius * dy) / r;
+          var ldx = dst.x - (radius * dx) / r;
+          var ldy = dst.y - (radius * dy) / r;
           var lex = lbx + prg * (ldx - lbx);
           var ley = lby + prg * (ldy - lby);
           
@@ -1517,7 +1739,7 @@
           ctx.moveTo(lbx + 1, lby + 1);
           ctx.lineTo(lex + 1, ley + 1);
           ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
-          ctx.lineWidth = ARROW_THICKNESS + 1;
+          ctx.lineWidth = arrowThickness + 1;
           ctx.stroke();
           ctx.closePath();
           
@@ -1530,17 +1752,17 @@
           ctx.moveTo(lbx, lby);
           ctx.lineTo(lex, ley);
           ctx.strokeStyle = gradient;
-          ctx.lineWidth = ARROW_THICKNESS;
+          ctx.lineWidth = arrowThickness;
           ctx.lineCap = 'round';
           ctx.stroke();
           ctx.closePath();
           
           // Draw the arrow head with improved styling
           var a   = Math.atan2(dy, dx);
-          var h1x = lex - ARROW_HEAD * Math.cos(a - ARROW_ANGLE);
-          var h1y = ley - ARROW_HEAD * Math.sin(a - ARROW_ANGLE);
-          var h2x = lex - ARROW_HEAD * Math.cos(a + ARROW_ANGLE);
-          var h2y = ley - ARROW_HEAD * Math.sin(a + ARROW_ANGLE);
+          var h1x = lex - arrowHead * Math.cos(a - ARROW_ANGLE);
+          var h1y = ley - arrowHead * Math.sin(a - ARROW_ANGLE);
+          var h2x = lex - arrowHead * Math.cos(a + ARROW_ANGLE);
+          var h2y = ley - arrowHead * Math.sin(a + ARROW_ANGLE);
           
           ctx.beginPath();
           ctx.moveTo(lex, ley);
@@ -1554,14 +1776,17 @@
           var mx = (lbx + lex) / 2;
           var my = (lby + ley) / 2;
           
+          // Adjust message text size for mobile
+          var msgFontSize = isSmallMobile ? 6 : (isMobile ? 6 : 7);
+          
           // Message background
-          ctx.font = '7px Inter, system-ui, sans-serif';
+          ctx.font = `${msgFontSize}px Inter, system-ui, sans-serif`;
           var textWidth = ctx.measureText(text).width;
           ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-          ctx.fillRect(mx - textWidth/2 - 4, my - 16, textWidth + 8, 16);
+          ctx.fillRect(mx - textWidth/2 - 4, my - 14, textWidth + 8, 14);
           ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
           ctx.lineWidth = 1;
-          ctx.strokeRect(mx - textWidth/2 - 4, my - 16, textWidth + 8, 16);
+          ctx.strokeRect(mx - textWidth/2 - 4, my - 14, textWidth + 8, 14);
           
           // Message text
           ctx.fillStyle = ARROW_TEXT_COLOR;
